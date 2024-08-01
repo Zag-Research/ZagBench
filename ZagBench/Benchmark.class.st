@@ -1,5 +1,19 @@
 "
-Benchmark runner
+Benchmark runner and superclass
+
+All benchmarks should be subclasses of this.
+
+Run a benchmark doing something like:
+
+      `Benchmark` `NBody`
+
+It will create an instance of the benchmark and send it an `innerBenchmarkLoop:` message to run the benchmark.
+The number of iterations for that method to run is the number returned by the class-side method `innerIterations`, which defaults to 250,000.
+A garbage collection is done before the first run, so depending on the benchmark, some variance may come from collection within individual runs.
+
+Statistics of execution are printed on the `Transcript`, including mean, standard deviation, and several other usefull values.
+
+All the values can be accessed from the run benchmark: `mean`, `stdDev`, `min`, `max`, `firstQuartile`, `median`, `thirdQuartile`, as well as the raw runtimes in `times`.
 
 Orginally based on https://github.com/smarr/are-we-fast-yet/blob/master/benchmarks/Smalltalk/Run.som which has the following copyright:
 
@@ -33,8 +47,8 @@ Class {
 		'numIterations',
 		'innerIterations',
 		'totalsq',
-		'runTimes',
-		'logging'
+		'logging',
+		'times'
 	],
 	#classVars : [
 		'ScriptConsole'
@@ -65,14 +79,15 @@ Benchmark class >> initialize [
 { #category : 'benchmarking' }
 Benchmark class >> innerIterations [
 
-	^ nil
+	^ 250000
 ]
 
 { #category : 'running' }
 Benchmark class >> run [
 
-	self == Benchmark ifTrue: [ self error: 'Ue like: Benchmark ', NBody name ].
-	self run: name
+	self == Benchmark ifTrue: [
+		self error: 'Ue like: Benchmark ' , NBody name ].
+	^ self run: name
 ]
 
 { #category : 'reflective operations' }
@@ -86,6 +101,12 @@ Benchmark >> doRuns: bench [
     1 to: numIterations do: [:i |
       self measure: bench
     ]
+]
+
+{ #category : 'calculating' }
+Benchmark >> firstQuartile [
+
+	^ times quartiles first
 ]
 
 { #category : 'initialization' }
@@ -103,8 +124,14 @@ Benchmark >> initialize: aName [
 	total := 0.
 	totalsq := 0.
 	numIterations := 10.
-	innerIterations := benchmarkSuite innerIterations ifNil: [ 250000 ].
-	runTimes := OrderedCollection new
+	innerIterations := benchmarkSuite innerIterations .
+	times := OrderedCollection new
+]
+
+{ #category : 'running' }
+Benchmark >> innerBenchmarkLoop: unreferenced [
+
+	^ self subclassResponsibility
 ]
 
 { #category : 'initialization' }
@@ -114,6 +141,18 @@ Benchmark >> loadBenchmarkSuite: className [
     cls ifNil: [
         self error: 'Failed loading benchmark: ', className ].
     ^ cls
+]
+
+{ #category : 'calculating' }
+Benchmark >> max [
+
+	^ times max
+]
+
+{ #category : 'calculating' }
+Benchmark >> mean [
+
+	^ total // numIterations
 ]
 
 { #category : 'running' }
@@ -128,9 +167,21 @@ Benchmark >> measure: bench [
 	runTime := endTime - startTime.
 	logging ifTrue: [self printResult: runTime].
 
-	runTimes add: runTime.
+	times add: runTime.
 	totalsq := totalsq + (runTime * runTime).
 	total := total + runTime
+]
+
+{ #category : 'calculating' }
+Benchmark >> median [
+
+	^ times quartiles second
+]
+
+{ #category : 'calculating' }
+Benchmark >> min [
+
+	^ times min
 ]
 
 { #category : 'reporting' }
@@ -157,32 +208,29 @@ Benchmark >> printTotal [
 { #category : 'reporting' }
 Benchmark >> reportBenchmark [
 
-	| mean stdDev |
-	mean := total // numIterations.
-	stdDev := self stdDev.
 	ScriptConsole
 		<<< name;
 		<<< ': n=';
 		<<< numIterations;
 		<<< ' mean: ';
-		<<< mean;
+		<<< self mean;
 		<<< 'us stdDev: ';
-		<<< stdDev asInteger;
-		<<< 'us ';
-		print: stdDev / mean * 100 withDecimaPlaces: 1;
-		<<< '% min: ';
-		<<< runTimes min;
+		<<< self stdDev asInteger;
+		<<< 'us (';
+		print: self stdDev / self mean * 100 withDecimaPlaces: 1;
+		<<< '%) min: ';
+		<<< self min;
 		<<< 'us 1stQ: ';
-		<<< runTimes quartiles first;
+		<<< self firstQuartile;
 		<<< 'us ';
 		<<< ' median: ';
-		<<< runTimes quartiles second;
+		<<< self median;
 		<<< 'us ';
 		<<< ' 3rdQ: ';
-		<<< runTimes quartiles third;
+		<<< self thirdQuartile;
 		<<< 'us ';
 		<<< ' max: ';
-		<<< runTimes max;
+		<<< self max;
 		<<< 'us ';
 		cr
 ]
@@ -190,8 +238,11 @@ Benchmark >> reportBenchmark [
 { #category : 'running' }
 Benchmark >> runBenchmark [
 
-	ScriptConsole println: 'Starting ' , name , ' benchmark ... ';flush.
+	ScriptConsole
+		println: 'Starting ' , name , ' benchmark ... ';
+		flush.
 	WorldMorph doOneCycle.
+	Smalltalk garbageCollect.
 
 	self doRuns: benchmarkSuite new.
 	self reportBenchmark.
@@ -203,4 +254,16 @@ Benchmark >> runBenchmark [
 Benchmark >> stdDev [
 
 	^ (totalsq / numIterations - (total / numIterations) squared ) sqrt
+]
+
+{ #category : 'calculating' }
+Benchmark >> thirdQuartile [
+
+	^ times quartiles third
+]
+
+{ #category : 'accessing' }
+Benchmark >> times [
+
+	^ times asArray
 ]
