@@ -8,6 +8,7 @@ Run a benchmark doing something like:
       `Benchmark` `NBody`
 
 It will create an instance of the benchmark and send it an `innerBenchmarkLoop:` message to run the benchmark.
+The number of runs for that benchmark is the number returned by the class-side method `mainIterations`, which defaults to 10.
 The number of iterations for that method to run is the number returned by the class-side method `innerIterations`, which defaults to 250,000.
 A garbage collection is done before the first run, so depending on the benchmark, some variance may come from collection within individual runs.
 
@@ -44,11 +45,11 @@ Class {
 		'name',
 		'benchmarkSuite',
 		'total',
-		'numIterations',
 		'innerIterations',
 		'totalsq',
 		'logging',
-		'times'
+		'times',
+		'mainIterations'
 	],
 	#classVars : [
 		'ScriptConsole'
@@ -67,6 +68,7 @@ Benchmark class >> benchmark: aString [
 { #category : 'reflective operations' }
 Benchmark class >> doesNotUnderstand: aMessage [
 
+	(Smalltalk classNamed: aMessage selector) ifNil: [ ^ super doesNotUnderstand: aMessage ].
 	^ self run: aMessage selector
 ]
 
@@ -80,6 +82,12 @@ Benchmark class >> initialize [
 Benchmark class >> innerIterations [
 
 	^ 250000
+]
+
+{ #category : 'benchmarking' }
+Benchmark class >> mainIterations [
+
+	^ 10
 ]
 
 { #category : 'running' }
@@ -98,7 +106,7 @@ Benchmark class >> run: aString [
 
 { #category : 'running' }
 Benchmark >> doRuns: bench [
-    1 to: numIterations do: [:i |
+    1 to: mainIterations do: [:i |
       self measure: bench
     ]
 ]
@@ -123,8 +131,8 @@ Benchmark >> initialize: aName [
 	benchmarkSuite := self loadBenchmarkSuite: aName.
 	total := 0.
 	totalsq := 0.
-	numIterations := 10.
-	innerIterations := benchmarkSuite innerIterations .
+	mainIterations := benchmarkSuite mainIterations.
+	innerIterations := benchmarkSuite innerIterations.
 	times := OrderedCollection new
 ]
 
@@ -152,7 +160,7 @@ Benchmark >> max [
 { #category : 'calculating' }
 Benchmark >> mean [
 
-	^ total // numIterations
+	^ total // mainIterations
 ]
 
 { #category : 'running' }
@@ -211,7 +219,7 @@ Benchmark >> reportBenchmark [
 	ScriptConsole
 		<<< name;
 		<<< ': n=';
-		<<< numIterations;
+		<<< mainIterations;
 		<<< ' mean: ';
 		<<< self mean;
 		<<< 'us stdDev: ';
@@ -253,7 +261,7 @@ Benchmark >> runBenchmark [
 { #category : 'calculating' }
 Benchmark >> stdDev [
 
-	^ (totalsq / numIterations - (total / numIterations) squared ) sqrt
+	^ (totalsq / mainIterations - (total / mainIterations) squared ) sqrt
 ]
 
 { #category : 'calculating' }
