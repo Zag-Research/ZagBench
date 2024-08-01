@@ -12,7 +12,7 @@ Ported from SOM at https://github.com/smarr/are-we-fast-yet/tree/master
 "
 Class {
 	#name : 'NBody',
-	#superclass : 'Object',
+	#superclass : 'Benchmark',
 	#category : 'ZagBench-NBody',
 	#package : 'ZagBench',
 	#tag : 'NBody'

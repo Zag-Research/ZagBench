@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 "
 Class {
-	#name : 'Run',
+	#name : 'Benchmark',
 	#superclass : 'Object',
 	#instVars : [
 		'name',
@@ -32,7 +32,9 @@ Class {
 		'total',
 		'numIterations',
 		'innerIterations',
-		'totalsq'
+		'totalsq',
+		'runTimes',
+		'logging'
 	],
 	#classVars : [
 		'ScriptConsole'
@@ -43,37 +45,70 @@ Class {
 }
 
 { #category : 'reflective operations' }
-Run class >> doesNotUnderstand: aMessage [
+Benchmark class >> benchmark: aString [
 
-	^ self new initialize: aMessage selector
+	^ self new initialize: aString
+]
+
+{ #category : 'reflective operations' }
+Benchmark class >> doesNotUnderstand: aMessage [
+
+	^ self run: aMessage selector
 ]
 
 { #category : 'class initialization' }
-Run class >> initialize [
+Benchmark class >> initialize [
 
 	ScriptConsole := Transcript
 ]
 
+{ #category : 'benchmarking' }
+Benchmark class >> innerIterations [
+
+	^ nil
+]
+
 { #category : 'running' }
-Run >> doRuns: bench [
+Benchmark class >> run [
+
+	self == Benchmark ifTrue: [ self error: 'Ue like: Benchmark ', NBody name ].
+	self run: name
+]
+
+{ #category : 'reflective operations' }
+Benchmark class >> run: aString [
+
+	^ (self benchmark: aString) runBenchmark
+]
+
+{ #category : 'running' }
+Benchmark >> doRuns: bench [
     1 to: numIterations do: [:i |
       self measure: bench
     ]
 ]
 
 { #category : 'initialization' }
-Run >> initialize: aName [
+Benchmark >> initialize [
 
-	name            := aName.
-	benchmarkSuite  := self loadBenchmarkSuite: aName.
-	total           := 0.
-	totalsq         := 0.
-	numIterations   := 10.
-	innerIterations := 250000.
+	super initialize.
+	logging := false
 ]
 
 { #category : 'initialization' }
-Run >> loadBenchmarkSuite: className [
+Benchmark >> initialize: aName [
+
+	name := aName.
+	benchmarkSuite := self loadBenchmarkSuite: aName.
+	total := 0.
+	totalsq := 0.
+	numIterations := 10.
+	innerIterations := benchmarkSuite innerIterations ifNil: [ 250000 ].
+	runTimes := OrderedCollection new
+]
+
+{ #category : 'initialization' }
+Benchmark >> loadBenchmarkSuite: className [
     | cls |
     cls := Smalltalk classNamed: className.
     cls ifNil: [
@@ -82,23 +117,24 @@ Run >> loadBenchmarkSuite: className [
 ]
 
 { #category : 'running' }
-Run >> measure: bench [
+Benchmark >> measure: bench [
 
 	| startTime endTime runTime |
 	startTime := Time primUTCMicrosecondsClock.
 	(bench innerBenchmarkLoop: innerIterations) ifFalse: [
-      self error: 'Benchmark failed with incorrect result'. ].
-	endTime   := Time primUTCMicrosecondsClock.
+		self error: 'Benchmark failed with incorrect result' ].
+	endTime := Time primUTCMicrosecondsClock.
 
 	runTime := endTime - startTime.
-	self printResult: runTime.
+	logging ifTrue: [self printResult: runTime].
 
+	runTimes add: runTime.
 	totalsq := totalsq + (runTime * runTime).
-	total := total + runTime.
+	total := total + runTime
 ]
 
 { #category : 'reporting' }
-Run >> printResult: runTime [
+Benchmark >> printResult: runTime [
 
 	ScriptConsole
 		<<< name;
@@ -109,7 +145,7 @@ Run >> printResult: runTime [
 ]
 
 { #category : 'reporting' }
-Run >> printTotal [
+Benchmark >> printTotal [
 
 	ScriptConsole
 		<<< 'Total Runtime: ';
@@ -119,7 +155,7 @@ Run >> printTotal [
 ]
 
 { #category : 'reporting' }
-Run >> reportBenchmark [
+Benchmark >> reportBenchmark [
 
 	| mean stdDev |
 	mean := total // numIterations.
@@ -134,22 +170,37 @@ Run >> reportBenchmark [
 		<<< stdDev asInteger;
 		<<< 'us ';
 		print: stdDev / mean * 100 withDecimaPlaces: 1;
-		<<< '%';
+		<<< '% min: ';
+		<<< runTimes min;
+		<<< 'us 1stQ: ';
+		<<< runTimes quartiles first;
+		<<< 'us ';
+		<<< ' median: ';
+		<<< runTimes quartiles second;
+		<<< 'us ';
+		<<< ' 3rdQ: ';
+		<<< runTimes quartiles third;
+		<<< 'us ';
+		<<< ' max: ';
+		<<< runTimes max;
+		<<< 'us ';
 		cr
 ]
 
 { #category : 'running' }
-Run >> runBenchmark [
-    ScriptConsole println: ('Starting ', name, ' benchmark ... ').
+Benchmark >> runBenchmark [
 
-    self doRuns: benchmarkSuite new.
-    self reportBenchmark.
+	ScriptConsole println: 'Starting ' , name , ' benchmark ... ';flush.
+	WorldMorph doOneCycle.
 
-    ScriptConsole println: ''
+	self doRuns: benchmarkSuite new.
+	self reportBenchmark.
+
+	ScriptConsole println: ''
 ]
 
 { #category : 'calculating' }
-Run >> stdDev [
+Benchmark >> stdDev [
 
 	^ (totalsq / numIterations - (total / numIterations) squared ) sqrt
 ]

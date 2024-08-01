@@ -15,3 +15,10 @@ ManifestZagBench class >> ruleLongMethodsRuleV1FalsePositive [
 	<ignoreForCoverage>
 	^ #(#(#(#RGPackageDefinition #(#ZagBench)) #'2024-07-31T13:53:20.583848-04:00') )
 ]
+
+{ #category : 'code-critics' }
+ManifestZagBench class >> ruleRefersToClassRuleV1FalsePositive [
+
+	<ignoreForCoverage>
+	^ #(#(#(#RGMethodDefinition #(#'Benchmark class' #run #true)) #'2024-08-01T09:49:37.471071-04:00') )
+]
