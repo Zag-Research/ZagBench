@@ -54,7 +54,7 @@ Run class >> initialize [
 	ScriptConsole := Transcript
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'running' }
 Run >> doRuns: bench [
     1 to: numIterations do: [:i |
       self measure: bench
@@ -81,7 +81,7 @@ Run >> loadBenchmarkSuite: className [
     ^ cls
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'running' }
 Run >> measure: bench [
 
 	| startTime endTime runTime |
@@ -97,27 +97,48 @@ Run >> measure: bench [
 	total := total + runTime.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'reporting' }
 Run >> printResult: runTime [
-    ScriptConsole println: (name, ': iterations=1 runtime: ', runTime asString, 'us')
+
+	ScriptConsole
+		<<< name;
+		<<< ': iterations=1 runtime: ';
+		<<< runTime;
+		<<< 'us';
+		cr
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'reporting' }
 Run >> printTotal [
-    ScriptConsole println: ('Total Runtime: ', total asString, 'us')
+
+	ScriptConsole
+		<<< 'Total Runtime: ';
+		<<< total;
+		<<< 'us';
+		cr
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'reporting' }
 Run >> reportBenchmark [
 
 	| mean stdDev |
 	mean := total // numIterations.
 	stdDev := self stdDev.
-	ScriptConsole println: (name, ': n=', numIterations asString,
-     ' mean: ', mean asString, 'us stdDev: ', stdDev asString, ' ', ((stdDev/mean*1000) asInteger * 0.1) asString, '%').
+	ScriptConsole
+		<<< name;
+		<<< ': n=';
+		<<< numIterations;
+		<<< ' mean: ';
+		<<< mean;
+		<<< 'us stdDev: ';
+		<<< stdDev asInteger;
+		<<< 'us ';
+		print: stdDev / mean * 100 withDecimaPlaces: 1;
+		<<< '%';
+		cr
 ]
 
-{ #category : 'initialization' }
+{ #category : 'running' }
 Run >> runBenchmark [
     ScriptConsole println: ('Starting ', name, ' benchmark ... ').
 
@@ -127,7 +148,7 @@ Run >> runBenchmark [
     ScriptConsole println: ''
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'calculating' }
 Run >> stdDev [
 
 	^ (totalsq / numIterations - (total / numIterations) squared ) sqrt
