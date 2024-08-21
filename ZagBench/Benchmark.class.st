@@ -59,6 +59,12 @@ Class {
 	#tag : 'Benchmarking'
 }
 
+{ #category : 'as yet unclassified' }
+Benchmark class >> allBenchmarks [
+
+	^ self instanceSide subclasses
+]
+
 { #category : 'reflective operations' }
 Benchmark class >> benchmark: aString [
 
@@ -94,7 +100,7 @@ Benchmark class >> mainIterations [
 Benchmark class >> run [
 
 	self == Benchmark ifTrue: [
-		self error: 'Ue like: Benchmark ' , NBody name ].
+		^ self allBenchmarks do: [ : benchmark | self run: benchmark name ] ].
 	^ self run: name
 ]
 
