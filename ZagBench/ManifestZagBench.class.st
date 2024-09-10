@@ -10,6 +10,13 @@ Class {
 }
 
 { #category : 'code-critics' }
+ManifestZagBench class >> ruleClassNotReferencedRuleV1FalsePositive [
+
+	<ignoreForCoverage>
+	^ #(#(#(#RGPackageDefinition #(#ZagBench)) #'2024-09-10T15:18:28.185408-04:00') )
+]
+
+{ #category : 'code-critics' }
 ManifestZagBench class >> ruleLongMethodsRuleV1FalsePositive [
 
 	<ignoreForCoverage>
