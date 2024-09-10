@@ -17,8 +17,24 @@ ManifestZagBench class >> ruleLongMethodsRuleV1FalsePositive [
 ]
 
 { #category : 'code-critics' }
+ManifestZagBench class >> ruleReCyclomaticComplexityRuleV1FalsePositive [
+
+	<ignoreForCoverage>
+	^ #( #( #( #RGPackageDefinition #( #ZagBench ) )
+	        #'2024-09-10T15:01:12.769636-04:00' ) )
+]
+
+{ #category : 'code-critics' }
 ManifestZagBench class >> ruleRefersToClassRuleV1FalsePositive [
 
 	<ignoreForCoverage>
 	^ #(#(#(#RGMethodDefinition #(#'Benchmark class' #run #true)) #'2024-08-01T09:49:37.471071-04:00') )
+]
+
+{ #category : 'code-critics' }
+ManifestZagBench class >> ruleWhileTrueRuleV1FalsePositive [
+
+	<ignoreForCoverage>
+	^ #( #( #( #RGPackageDefinition #( #ZagBench ) )
+	        #'2024-09-10T15:01:22.027308-04:00' ) )
 ]
