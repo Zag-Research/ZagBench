@@ -113,5 +113,6 @@ NBodySystem >> energy [
 { #category : 'initialization' }
 NBodySystem >> initialize [
     self createBodies
+"testing"
 
 ]
