@@ -4,16 +4,6 @@ I generate random integers in a repeatable way so that our ""random"" algorithms
 Class {
 	#name : 'BenchRandom',
 	#superclass : 'Object',
-	#classInstVars : [
-		'randomArray',
-		'lcg',
-		'size',
-		'seed',
-		'a',
-		'c',
-		'm',
-		'rand'
-	],
 	#category : 'ZagBench-Benchmarking',
 	#package : 'ZagBench',
 	#tag : 'Benchmarking'
@@ -71,6 +61,24 @@ BenchRandom >> makeInvertable [
 		row
 			at: index
 			put: (row inject: 0 into: [ :sum :each | sum + each abs ]) ]
+]
+
+{ #category : 'accessing' }
+BenchRandom >> next [
+
+	^ 0.5
+]
+
+{ #category : 'accessing' }
+BenchRandom >> nextInteger: anInteger [
+	"Answer a random integer in the interval [1, anInteger].
+	Handle large numbers too (for cryptography)."
+
+	anInteger strictlyPositive ifFalse: [
+		self error: 'Range must be positive' ].
+
+	^ (self next * anInteger) truncated
+	  + 1
 ]
 
 { #category : 'as yet unclassified' }
