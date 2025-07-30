@@ -49,7 +49,8 @@ Class {
 		'totalsq',
 		'logging',
 		'times',
-		'mainIterations'
+		'mainIterations',
+		'random'
 	],
 	#classVars : [
 		'ScriptConsole'
@@ -139,7 +140,8 @@ Benchmark >> firstQuartile [
 Benchmark >> initialize [
 
 	super initialize.
-	logging := false
+	logging := false.
+	random := BenchRandom new
 ]
 
 { #category : 'initialization' }
