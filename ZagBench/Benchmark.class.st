@@ -97,6 +97,12 @@ Benchmark class >> mainIterations [
 ]
 
 { #category : 'running' }
+Benchmark class >> results [
+
+	^ timings
+]
+
+{ #category : 'running' }
 Benchmark class >> run [
 
 	self == Benchmark ifTrue: [
@@ -108,6 +114,12 @@ Benchmark class >> run [
 Benchmark class >> run: aString [
 
 	^ (self benchmark: aString) runBenchmark
+]
+
+{ #category : 'benchmarking' }
+Benchmark >> benchmark [  
+
+	^ self subclassResponsibility
 ]
 
 { #category : 'running' }
@@ -250,6 +262,12 @@ Benchmark >> reportBenchmark [
 ]
 
 { #category : 'running' }
+Benchmark >> run [
+
+	^ [self assert: [ self innerBenchmarkLoop: self iterations ]] timeToRunWithoutGC
+]
+
+{ #category : 'running' }
 Benchmark >> runBenchmark [
 
 	ScriptConsole
@@ -280,4 +298,10 @@ Benchmark >> thirdQuartile [
 Benchmark >> times [
 
 	^ times asArray
+]
+
+{ #category : 'benchmarking' }
+Benchmark >> verifyResult: result [
+
+	^ self subclassResponsibility
 ]
