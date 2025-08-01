@@ -11,7 +11,7 @@ The Computer Language Benchmarks Game
 Ported from SOM at https://github.com/smarr/are-we-fast-yet/tree/master
 "
 Class {
-	#name : 'NBody',
+	#name : 'BeNBody',
 	#superclass : 'Benchmark',
 	#category : 'ZagBench-NBody',
 	#package : 'ZagBench',
@@ -19,17 +19,17 @@ Class {
 }
 
 { #category : 'instance creation' }
-NBody class >> new [
+BeNBody class >> new [
 
-	Body initialize.
+	BeBody initialize.
    ^ super new
 ]
 
 { #category : 'running' }
-NBody >> innerBenchmarkLoop: iterations [
+BeNBody >> innerBenchmarkLoop: iterations [
 
 	| system |
-	system := NBodySystem new.
+	system := BeNBodySystem new.
 
 	1 to: iterations do: [ :i | system advance: 0.01 ].
 
@@ -37,11 +37,11 @@ NBody >> innerBenchmarkLoop: iterations [
 ]
 
 { #category : 'as yet unclassified' }
-NBody >> verify: result for: innerIterations [
-    innerIterations = 250000 ifTrue: [ ^ result = -0.1690859889909308  ].
-    innerIterations =      1 ifTrue: [ ^ result = -0.16907495402506745 ].
+BeNBody >> verify: result for: iterations [
+	iterations = 250000 ifTrue: [ ^ result = -0.1690859889909308  ].
+	iterations =      1 ifTrue: [ ^ result = -0.16907495402506745 ].
 
-    ('No verification result for ', innerIterations asString, ' found') println.
-    ('Result is: ', result asString) println.
-    ^ false
+	ScriptConsole << 'No verification result for ' << iterations asString << ' found'; cr.
+	ScriptConsole << 'Result is: ' << result asString; cr.
+	^ false
 ]

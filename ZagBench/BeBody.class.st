@@ -9,7 +9,7 @@ The Computer Language Benchmarks Game
   See LICENSE.md file.
 "
 Class {
-	#name : 'Body',
+	#name : 'BeBody',
 	#superclass : 'Object',
 	#instVars : [
 		'x',
@@ -29,31 +29,31 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-Body class >> DaysPerYear [
+BeBody class >> DaysPerYear [
 
 	^ 365.24
 ]
 
 { #category : 'as yet unclassified' }
-Body class >> Pi [
+BeBody class >> Pi [
 
 	^ 3.141592653589793
 ]
 
 { #category : 'as yet unclassified' }
-Body class >> SolarMass [
+BeBody class >> SolarMass [
 
 	^ solarMass
 ]
 
 { #category : 'as yet unclassified' }
-Body class >> initialize [
+BeBody class >> initialize [
 
 	solarMass := 4 * self Pi * self Pi
 ]
 
 { #category : 'as yet unclassified' }
-Body class >> jupiter [
+BeBody class >> jupiter [
 
      ^ self new
          initX:    4.8414314424647209
@@ -67,7 +67,7 @@ Body class >> jupiter [
 ]
 
 { #category : 'as yet unclassified' }
-Body class >> neptune [
+BeBody class >> neptune [
     ^ self new
         initX:   15.3796971148509165
             y:  -25.9193146099879641
@@ -79,7 +79,7 @@ Body class >> neptune [
 ]
 
 { #category : 'as yet unclassified' }
-Body class >> saturn [
+BeBody class >> saturn [
     ^ self new
         initX:    8.34336671824457987
             y:    4.12479856412430479
@@ -92,12 +92,12 @@ Body class >> saturn [
 ]
 
 { #category : 'as yet unclassified' }
-Body class >> sun [
+BeBody class >> sun [
     ^ self new initX: 0.0 y: 0.0 z: 0.0 vx: 0.0 vy: 0.0 vz: 0.0 mass: 1.0
 ]
 
 { #category : 'as yet unclassified' }
-Body class >> uranus [
+BeBody class >> uranus [
     ^ self new
         initX:   12.894369562139131
             y:  -15.1111514016986312
@@ -110,37 +110,37 @@ Body class >> uranus [
 ]
 
 { #category : 'as yet unclassified' }
-Body >> initX: anX y: aY z: aZ vx: aVX vy: aVY vz: aVZ mass: aMass [
+BeBody >> initX: anX y: aY z: aZ vx: aVX vy: aVY vz: aVZ mass: aMass [
     x := anX.
     y := aY.
     z := aZ.
-    vx := aVX * Body DaysPerYear.
-    vy := aVY * Body DaysPerYear.
-    vz := aVZ * Body DaysPerYear.
-    mass := aMass * Body SolarMass
+    vx := aVX * BeBody DaysPerYear.
+    vy := aVY * BeBody DaysPerYear.
+    vz := aVZ * BeBody DaysPerYear.
+    mass := aMass * BeBody SolarMass
 ]
 
 { #category : 'accessing' }
-Body >> mass [
+BeBody >> mass [
 
 	^ mass
 ]
 
 { #category : 'accessing' }
-Body >> mass: anObject [
+BeBody >> mass: anObject [
 
 	mass := anObject
 ]
 
 { #category : 'as yet unclassified' }
-Body >> offsetMomentumX: px y: py z: pz [
-    vx := 0.0 - (px / Body SolarMass).
-    vy := 0.0 - (py / Body SolarMass).
-    vz := 0.0 - (pz / Body SolarMass)
+BeBody >> offsetMomentumX: px y: py z: pz [
+    vx := 0.0 - (px / BeBody SolarMass).
+    vy := 0.0 - (py / BeBody SolarMass).
+    vz := 0.0 - (pz / BeBody SolarMass)
 ]
 
 { #category : 'printing' }
-Body >> print [
+BeBody >> print [
     'x:  ' print. x println.
     'y:  ' print. y println.
     'z:  ' print. z println.
@@ -153,73 +153,73 @@ Body >> print [
 ]
 
 { #category : 'accessing' }
-Body >> vx [
+BeBody >> vx [
 
 	^ vx
 ]
 
 { #category : 'accessing' }
-Body >> vx: anObject [
+BeBody >> vx: anObject [
 
 	vx := anObject
 ]
 
 { #category : 'accessing' }
-Body >> vy [
+BeBody >> vy [
 
 	^ vy
 ]
 
 { #category : 'accessing' }
-Body >> vy: anObject [
+BeBody >> vy: anObject [
 
 	vy := anObject
 ]
 
 { #category : 'accessing' }
-Body >> vz [
+BeBody >> vz [
 
 	^ vz
 ]
 
 { #category : 'accessing' }
-Body >> vz: anObject [
+BeBody >> vz: anObject [
 
 	vz := anObject
 ]
 
 { #category : 'accessing' }
-Body >> x [
+BeBody >> x [
 
 	^ x
 ]
 
 { #category : 'accessing' }
-Body >> x: anObject [
+BeBody >> x: anObject [
 
 	x := anObject
 ]
 
 { #category : 'accessing' }
-Body >> y [
+BeBody >> y [
 
 	^ y
 ]
 
 { #category : 'accessing' }
-Body >> y: anObject [
+BeBody >> y: anObject [
 
 	y := anObject
 ]
 
 { #category : 'accessing' }
-Body >> z [
+BeBody >> z [
 
 	^ z
 ]
 
 { #category : 'accessing' }
-Body >> z: anObject [
+BeBody >> z: anObject [
 
 	z := anObject
 ]

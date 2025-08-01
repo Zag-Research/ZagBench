@@ -13,7 +13,7 @@ Class {
 BenchRandomTest >> setUp [
 
 	super setUp.
-	gen := BenchRandom new
+	gen := BeRandom new
 ]
 
 { #category : 'tests' }

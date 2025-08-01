@@ -14,11 +14,9 @@ Class {
 }
 
 { #category : 'benchmarking' }
-BeSieve >> benchmark [
-    | flags |
-    flags  := Array new: 5000 withAll: true.
-    ^ self sieve: flags.
+BeSieve class >> innerIterations [
 
+	^ 12500000
 ]
 
 { #category : 'running' }
@@ -54,11 +52,16 @@ BeSieve >> sieve: flags [
 
 { #category : 'benchmarking' }
 BeSieve >> verify: result for: iterations [
-    iterations = 250000 ifTrue: [ ^ result = 22044 ].
-    iterations =   5000 ifTrue: [ ^ result = 669 ].
-    iterations =      1 ifTrue: [ ^ result = 0 ].
 
-    Transcript  << 'No verification result for ' << iterations asString << ' found'; cr.
-    Transcript << 'Result is: ' << result asString; cr.
-    ^ false
+	iterations = 12500000 ifTrue: [ ^ result = 818703 ].
+	iterations = 10000000 ifTrue: [ ^ result = 664579 ].
+	iterations =  1000000 ifTrue: [ ^ result = 78498 ].
+	iterations =   250000 ifTrue: [ ^ result = 22044 ].
+	iterations =    10000 ifTrue: [ ^ result = 1229 ].
+	iterations =     5000 ifTrue: [ ^ result = 669 ].
+	iterations =        1 ifTrue: [ ^ result = 0 ].
+
+	ScriptConsole << 'No verification result for ' << iterations asString << ' found'; cr.
+	ScriptConsole << 'Result is: ' << result asString; cr.
+	^ false
 ]

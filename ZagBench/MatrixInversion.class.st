@@ -34,5 +34,7 @@ MatrixInversion >> innerBenchmarkLoop: iterations [
 { #category : 'running' }
 MatrixInversion >> multiplyInverse [ 
 	" calculate the inverse of sourceMatrix - non-destructively "
-	" then multiply that by sourceMatrix and verify the result is close to an identity matrix "
+	" then multiply that by sourceMatrix and return true if the result is close to an identity matrix, else false "
+	
+	^ false
 ]

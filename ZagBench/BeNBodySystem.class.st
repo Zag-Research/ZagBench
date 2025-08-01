@@ -9,7 +9,7 @@ The Computer Language Benchmarks Game
   See LICENSE.md file.
 "
 Class {
-	#name : 'NBodySystem',
+	#name : 'BeNBodySystem',
 	#superclass : 'Object',
 	#instVars : [
 		'bodies'
@@ -20,7 +20,7 @@ Class {
 }
 
 { #category : 'initialization' }
-NBodySystem >> advance: dt [
+BeNBodySystem >> advance: dt [
     1 to: bodies size do: [:i |
       | iBody |
       iBody := bodies at: i.
@@ -55,15 +55,15 @@ NBodySystem >> advance: dt [
 ]
 
 { #category : 'initialization' }
-NBodySystem >> createBodies [
+BeNBodySystem >> createBodies [
     | px py pz |
 
     bodies := Array new: 5.
-    bodies at: 1 put: Body sun.
-    bodies at: 2 put: Body jupiter.
-    bodies at: 3 put: Body saturn.
-    bodies at: 4 put: Body uranus.
-    bodies at: 5 put: Body neptune.
+    bodies at: 1 put: BeBody sun.
+    bodies at: 2 put: BeBody jupiter.
+    bodies at: 3 put: BeBody saturn.
+    bodies at: 4 put: BeBody uranus.
+    bodies at: 5 put: BeBody neptune.
 
     "bodies do: [:b | b print. '' println ]."
 
@@ -82,7 +82,7 @@ NBodySystem >> createBodies [
 ]
 
 { #category : 'initialization' }
-NBodySystem >> energy [
+BeNBodySystem >> energy [
     | e |
     e := 0.0.
 
@@ -111,7 +111,7 @@ NBodySystem >> energy [
 ]
 
 { #category : 'initialization' }
-NBodySystem >> initialize [
+BeNBodySystem >> initialize [
     self createBodies
 "testing"
 

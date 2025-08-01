@@ -6,6 +6,8 @@ All benchmarks should be subclasses of this.
 Run a benchmark doing something like:
 
       `Benchmark` `NBody`
+or
+		`Benchmark` run: #NBody
 
 It will create an instance of the benchmark and send it an `innerBenchmarkLoop:` message to run the benchmark.
 The number of runs for that benchmark is the number returned by the class-side method `mainIterations`, which defaults to 10.
@@ -75,7 +77,9 @@ Benchmark class >> benchmark: aString [
 { #category : 'reflective operations' }
 Benchmark class >> doesNotUnderstand: aMessage [
 
-	(Smalltalk classNamed: aMessage selector) ifNil: [ ^ super doesNotUnderstand: aMessage ].
+	(Smalltalk classNamed: aMessage selector) ifNil: [
+		(Smalltalk classNamed: #Be, aMessage selector) ifNil: [
+			^ super doesNotUnderstand: aMessage ]].
 	^ self run: aMessage selector
 ]
 
@@ -98,12 +102,6 @@ Benchmark class >> mainIterations [
 ]
 
 { #category : 'running' }
-Benchmark class >> results [
-
-	^ timings
-]
-
-{ #category : 'running' }
 Benchmark class >> run [
 
 	self == Benchmark ifTrue: [
@@ -114,13 +112,7 @@ Benchmark class >> run [
 { #category : 'reflective operations' }
 Benchmark class >> run: aString [
 
-	^ (self benchmark: aString) runBenchmark
-]
-
-{ #category : 'benchmarking' }
-Benchmark >> benchmark [  
-
-	^ self subclassResponsibility
+	^ (self benchmark: aString asSymbol) runBenchmark
 ]
 
 { #category : 'running' }
@@ -141,7 +133,7 @@ Benchmark >> initialize [
 
 	super initialize.
 	logging := false.
-	random := BenchRandom new
+	random := BeRandom new
 ]
 
 { #category : 'initialization' }
@@ -164,11 +156,14 @@ Benchmark >> innerBenchmarkLoop: unreferenced [
 
 { #category : 'initialization' }
 Benchmark >> loadBenchmarkSuite: className [
-    | cls |
-    cls := Smalltalk classNamed: className.
-    cls ifNil: [
-        self error: 'Failed loading benchmark: ', className ].
-    ^ cls
+
+	| cls |
+	cls := Smalltalk classNamed: className.
+	cls ifNil: [
+		cls := Smalltalk classNamed: (#Be, className).
+		cls ifNil: [
+			self error: 'Failed loading benchmark: ', className ] ].
+	^ cls
 ]
 
 { #category : 'calculating' }
@@ -237,43 +232,37 @@ Benchmark >> printTotal [
 Benchmark >> reportBenchmark [
 
 	ScriptConsole
-		<<< name;
-		<<< ': n=';
-		<<< mainIterations;
-		<<< ' mean: ';
-		<<< self mean;
-		<<< 'us stdDev: ';
-		<<< self stdDev asInteger;
-		<<< 'us (';
-		print: self stdDev / self mean * 100 withDecimaPlaces: 1;
-		<<< '%) min: ';
-		<<< self min;
-		<<< 'us 1stQ: ';
-		<<< self firstQuartile;
-		<<< 'us ';
-		<<< ' median: ';
-		<<< self median;
-		<<< 'us ';
-		<<< ' 3rdQ: ';
-		<<< self thirdQuartile;
-		<<< 'us ';
-		<<< ' max: ';
-		<<< self max;
-		<<< 'us ';
+		<< name;
+		<< ': n=';
+		<< mainIterations;
+		<< ' mean: ';
+		<< self mean;
+		<< 'us stdDev: ';
+		<< self stdDev asInteger;
+		<< 'us (';
+		<< (self stdDev / self mean * 100 printShowingDecimalPlaces: 1);
+		<< '%) min: ';
+		<< self min;
+		<< 'us 1stQ: ';
+		<< self firstQuartile;
+		<< 'us ';
+		<< ' median: ';
+		<< self median;
+		<< 'us ';
+		<< ' 3rdQ: ';
+		<< self thirdQuartile;
+		<< 'us ';
+		<< ' max: ';
+		<< self max;
+		<< 'us ';
 		cr
-]
-
-{ #category : 'running' }
-Benchmark >> run [
-
-	^ [self assert: [ self innerBenchmarkLoop: self iterations ]] timeToRunWithoutGC
 ]
 
 { #category : 'running' }
 Benchmark >> runBenchmark [
 
 	ScriptConsole
-		println: 'Starting ' , name , ' benchmark ... ';
+		<< 'Starting ' << name << ' benchmark ... ';cr;
 		flush.
 	WorldMorph doOneCycle.
 	Smalltalk garbageCollect.
@@ -281,7 +270,7 @@ Benchmark >> runBenchmark [
 	self doRuns: benchmarkSuite new.
 	self reportBenchmark.
 
-	ScriptConsole println: ''
+	ScriptConsole cr
 ]
 
 { #category : 'calculating' }

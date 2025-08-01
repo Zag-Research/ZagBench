@@ -142,7 +142,7 @@ BeDBVariable >> setValue: aValue strength: strengthSymbol [
 	editConstraint := BeDBEditConstraint var: self strength: strengthSymbol.
 	(editConstraint isSatisfied) ifTrue:
 		[self value: aValue.
-		 BeDBPlanner propagateFrom: self].
+		 BeDeltaBlue propagateFrom: self].
 	editConstraint destroyConstraint.
 ]
 

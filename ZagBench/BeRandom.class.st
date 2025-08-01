@@ -2,7 +2,7 @@
 I generate random integers in a repeatable way so that our ""random"" algorithms are repeatable.
 "
 Class {
-	#name : 'BenchRandom',
+	#name : 'BeRandom',
 	#superclass : 'Object',
 	#instVars : [
 		'rand',
@@ -17,7 +17,7 @@ Class {
 }
 
 { #category : 'random value creation' }
-BenchRandom >> between: low and: high [
+BeRandom >> between: low and: high [
 	"Answer a random integer in the interval [1, anInteger].
 	Handle large numbers too (for cryptography)."
 
@@ -25,7 +25,7 @@ BenchRandom >> between: low and: high [
 ]
 
 { #category : 'initialization' }
-BenchRandom >> initialize [
+BeRandom >> initialize [
 
 	super initialize.
 	rand := 12345. "Choose an initial seed value"
@@ -36,7 +36,7 @@ BenchRandom >> initialize [
 ]
 
 { #category : 'random value creation' }
-BenchRandom >> makeInvertable: size [
+BeRandom >> makeInvertable: size [
 
 	^ (self randomSquare: size) withIndexDo: [ :row :index |
 		row
@@ -46,13 +46,13 @@ BenchRandom >> makeInvertable: size [
 ]
 
 { #category : 'random value creation' }
-BenchRandom >> next [
+BeRandom >> next [
 	rand := multiplier * rand + increment \\ modulus . "Linear congruential generator formula"
 	^ rand * scale
 ]
 
 { #category : 'random value creation' }
-BenchRandom >> nextInteger: anInteger [
+BeRandom >> nextInteger: anInteger [
 	"Answer a random integer in the interval [1, anInteger].
 	Handle large numbers too (for cryptography)."
 
@@ -64,13 +64,13 @@ BenchRandom >> nextInteger: anInteger [
 ]
 
 { #category : 'random value creation' }
-BenchRandom >> randomSquare: anInteger [
+BeRandom >> randomSquare: anInteger [
 
 	^ self randomWithRows: anInteger columns: anInteger
 ]
 
 { #category : 'random value creation' }
-BenchRandom >> randomWithRows: rows columns: cols [
+BeRandom >> randomWithRows: rows columns: cols [
 
 	^ (1 to: rows) collect: [ :i |
 		  (1 to: cols) collect: [ :j | self next ] ]

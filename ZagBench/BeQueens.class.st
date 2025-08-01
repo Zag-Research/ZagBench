@@ -2,7 +2,7 @@
 I implement the classic N-Queens problem
 "
 Class {
-	#name : 'Queens',
+	#name : 'BeQueens',
 	#superclass : 'Benchmark',
 	#instVars : [
 		'freeRows',
@@ -16,13 +16,13 @@ Class {
 }
 
 { #category : 'benchmarking' }
-Queens class >> innerIterations [
+BeQueens class >> innerIterations [
 
 	^ 30000
 ]
 
 { #category : 'running' }
-Queens >> innerBenchmarkLoop: iterations [
+BeQueens >> innerBenchmarkLoop: iterations [
 
 	| result |
 	result := true.
@@ -31,7 +31,7 @@ Queens >> innerBenchmarkLoop: iterations [
 ]
 
 { #category : 'as yet unclassified' }
-Queens >> placeQueen: c [
+BeQueens >> placeQueen: c [
     1 to: 8 do: [ :r | 
       (self row: r column: c)
         ifTrue: [
@@ -44,7 +44,7 @@ Queens >> placeQueen: c [
 ]
 
 { #category : 'initialization' }
-Queens >> queens [
+BeQueens >> queens [
 
 	freeRows := Array new: 8 withAll: true.
 	freeMaxs := Array new: 16 withAll: true.
@@ -54,12 +54,12 @@ Queens >> queens [
 ]
 
 { #category : 'as yet unclassified' }
-Queens >> row: r column: c [
+BeQueens >> row: r column: c [
     ^ (freeRows at: r) and: [(freeMaxs at: c + r) and: [(freeMins at: c - r + 8)]]
 ]
 
 { #category : 'as yet unclassified' }
-Queens >> row: r column: c put: v [
+BeQueens >> row: r column: c put: v [
     freeRows at: r         put: v.
     freeMaxs at: c + r     put: v.
     freeMins at: c - r + 8 put: v.

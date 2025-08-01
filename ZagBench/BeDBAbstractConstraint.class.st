@@ -24,7 +24,7 @@ BeDBAbstractConstraint >> addConstraint [
 	"Activate this constraint and attempt to satisfy it."
 
 	self addToGraph.
-	BeDBPlanner current incrementalAdd: self.
+	BeDeltaBlue current incrementalAdd: self.
 ]
 
 { #category : 'add/remove' }
@@ -48,7 +48,7 @@ BeDBAbstractConstraint >> destroyConstraint [
 	"Deactivate this constraint, remove it from the constraint graph,
 	 possibly causing other constraints to be satisfied, and destroy it."
 
-	(self isSatisfied) ifTrue: [BeDBPlanner current incrementalRemove: self].
+	(self isSatisfied) ifTrue: [BeDeltaBlue current incrementalRemove: self].
 	self removeFromGraph.
 	self release.
 ]
@@ -172,7 +172,7 @@ BeDBAbstractConstraint >> satisfy: mark [
 			 overridden := out determinedBy.
 			 (overridden == nil) ifFalse: [overridden markUnsatisfied].
 			 out determinedBy: self.
-			 (BeDBPlanner current addPropagate: self mark: mark) ifFalse:
+			 (BeDeltaBlue current addPropagate: self mark: mark) ifFalse:
 				[self notify:
 					('Cycle encountered adding:\   ',
 					 self printString,
