@@ -290,9 +290,3 @@ Benchmark >> times [
 
 	^ times asArray
 ]
-
-{ #category : 'benchmarking' }
-Benchmark >> verifyResult: result [
-
-	^ self subclassResponsibility
-]

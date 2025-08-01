@@ -1,5 +1,5 @@
 Class {
-	#name : 'MatrixInversion',
+	#name : 'BeMatrixInversion',
 	#superclass : 'Benchmark',
 	#instVars : [
 		'matrix',
@@ -14,8 +14,14 @@ Class {
 	#tag : 'MatrixInversion'
 }
 
+{ #category : 'benchmarking' }
+BeMatrixInversion class >> innerIterations [
+
+	^ 250
+]
+
 { #category : 'initialization' }
-MatrixInversion >> initialize [
+BeMatrixInversion >> initialize [
 
 	super initialize.
 	size := 10.
@@ -23,7 +29,7 @@ MatrixInversion >> initialize [
 ]
 
 { #category : 'running' }
-MatrixInversion >> innerBenchmarkLoop: iterations [
+BeMatrixInversion >> innerBenchmarkLoop: iterations [
 
 	| result |
 	result := true.
@@ -32,7 +38,7 @@ MatrixInversion >> innerBenchmarkLoop: iterations [
 ]
 
 { #category : 'running' }
-MatrixInversion >> multiplyInverse [ 
+BeMatrixInversion >> multiplyInverse [ 
 	" calculate the inverse of sourceMatrix - non-destructively "
 	" then multiply that by sourceMatrix and return true if the result is close to an identity matrix, else false "
 	
