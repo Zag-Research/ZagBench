@@ -27,18 +27,24 @@ BeMatrixInversion >> initialize [
 	size := 10.
 	sourceMatrix := random makeInvertable: size
 ]
-createIdentityMatrix
+
+{ #category : 'fixThis' }
+BeMatrixInversion >> createIdentityMatrix [
 	"Creates a new identity matrix of a given size."
 	
 	| identity identityMatrix|
 	identityMatrix := (1 to: size) collect: [ :i |
 		(1 to: size) collect: [ :j | (i = j) ifTrue: [ 1.0 ] ifFalse: [ 0.0 ] ] ].
 	^ self from: identityMatrix.
-"at: aRow and: aCol put: aValue[
-	"Sets the element at the specified row and column to a new value."
-	(elements at: aRow) at: aCol put: aValue] "
+]
 
-	createAugmentedMatrix
+{ #category : 'fixThis' }
+BeMatrixInversion >> at: aRow and: aCol put: aValue[
+	"Sets the element at the specified row and column to a new value."
+	(elements at: aRow) at: aCol put: aValue]
+
+{ #category : 'fixThis' }
+BeMatrixInversion >> createAugmentedMatrix
 	"Create an augmented matrix by combining the original matrix
 	   with an identity matrix of the same size."
 
@@ -46,8 +52,10 @@ createIdentityMatrix
 	identity := Matrix identity: rows.
 	augmentedMatrix := (1 to: rows) collect: [ :i |
 		(self elements at: i), (identity elements at: i) ].
+]
 
-		partialPivoting
+{ #category : 'fixThis' }
+BeMatrixInversion >> partialPivoting
 "Partial Pivoting: Find the row with the largest pivot element."
 
 | maxVal maxRow rows augmentedMatrix|
@@ -61,8 +69,10 @@ createIdentityMatrix
 				maxRow := currentRow.
 			]
 		]] .
-		
-		performGaussianElimination
+]
+
+{ #category : 'fixThis' }
+BeMatrixInversion >> performGaussianElimination
 "Perform Gaussian elimination to transform the left side into an identity matrix."
 
 |rows  maxVal maxRow augmentedMatrix pivotRow  |
@@ -77,8 +87,10 @@ createIdentityMatrix
 			]
 		]
 	].
-	
-		swapRowsIfHigherRowsFound	
+]
+
+{ #category : 'fixThis' }
+BeMatrixInversion >> swapRowsIfHigherRowsFound	
 | tempRow maxRow pivotRow augmentedMatrix|
 	maxRow ~= pivotRow ifTrue: [
 			
@@ -86,8 +98,10 @@ createIdentityMatrix
 			augmentedMatrix at: pivotRow put: (augmentedMatrix at: maxRow).
 			augmentedMatrix at: maxRow put: tempRow.
 		].
+]
 
-		extractInverseMatrix 
+{ #category : 'fixThis' }
+BeMatrixInversion >> extractInverseMatrix 
 
 | invertedMatrix Matrix rows augmentedMatrix aStream|
 
@@ -101,6 +115,7 @@ invertedMatrix := (1 to: rows) collect: [ :i |
 	self elements do: [ :row |
 		aStream cr; nextPutAll: '  '; nextPutAll: row printString.
 	].
+]
 
 { #category : 'running' }
 BeMatrixInversion >> innerBenchmarkLoop: iterations [
