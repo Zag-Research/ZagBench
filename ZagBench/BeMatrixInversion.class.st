@@ -44,7 +44,7 @@ BeMatrixInversion >> at: aRow and: aCol put: aValue[
 	(elements at: aRow) at: aCol put: aValue]
 
 { #category : 'fixThis' }
-BeMatrixInversion >> createAugmentedMatrix
+BeMatrixInversion >> createAugmentedMatrix [
 	"Create an augmented matrix by combining the original matrix
 	   with an identity matrix of the same size."
 
@@ -55,7 +55,7 @@ BeMatrixInversion >> createAugmentedMatrix
 ]
 
 { #category : 'fixThis' }
-BeMatrixInversion >> partialPivoting
+BeMatrixInversion >> partialPivoting [
 "Partial Pivoting: Find the row with the largest pivot element."
 
 | maxVal maxRow rows augmentedMatrix|
@@ -72,7 +72,7 @@ BeMatrixInversion >> partialPivoting
 ]
 
 { #category : 'fixThis' }
-BeMatrixInversion >> performGaussianElimination
+BeMatrixInversion >> performGaussianElimination [
 "Perform Gaussian elimination to transform the left side into an identity matrix."
 
 |rows  maxVal maxRow augmentedMatrix pivotRow  |
@@ -90,7 +90,7 @@ BeMatrixInversion >> performGaussianElimination
 ]
 
 { #category : 'fixThis' }
-BeMatrixInversion >> swapRowsIfHigherRowsFound	
+BeMatrixInversion >> swapRowsIfHigherRowsFound	[
 | tempRow maxRow pivotRow augmentedMatrix|
 	maxRow ~= pivotRow ifTrue: [
 			
@@ -101,7 +101,7 @@ BeMatrixInversion >> swapRowsIfHigherRowsFound
 ]
 
 { #category : 'fixThis' }
-BeMatrixInversion >> extractInverseMatrix 
+BeMatrixInversion >> extractInverseMatrix [
 
 | invertedMatrix Matrix rows augmentedMatrix aStream|
 
