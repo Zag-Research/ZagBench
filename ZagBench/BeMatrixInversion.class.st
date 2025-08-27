@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'matrix',
 		'sourceMatrix',
-		'size'
+		'size',
+		'augmentedMatrix'
 	],
 	#classInstVars : [
 		'size'
@@ -31,20 +32,20 @@ BeMatrixInversion >> createAugmentedMatrix [
 	"Create an augmented matrix by combining the original matrix
 	   with an identity matrix of the same size."
 
-	| augmentedMatrix identity invertedMatrix Matrix rows |
-	identity := Matrix identity: rows.
-	augmentedMatrix := (1 to: rows) collect: [ :i |
-		(self elements at: i), (identity elements at: i) ].
+	| identity |
+	identity := self createIdentityMatrix.
+	augmentedMatrix := (1 to: size) collect: [ :row |
+		(sourceMatrix at: row), (identity at: row) ].
 ]
 
 { #category : 'fixThis' }
 BeMatrixInversion >> createIdentityMatrix [
 	"Creates a new identity matrix of a given size."
 	
-	| identity identityMatrix|
+	| identityMatrix|
 	identityMatrix := (1 to: size) collect: [ :i |
 		(1 to: size) collect: [ :j | (i = j) ifTrue: [ 1.0 ] ifFalse: [ 0.0 ] ] ].
-	^ self from: identityMatrix.
+	^ identityMatrix.
 ]
 
 { #category : 'fixThis' }
