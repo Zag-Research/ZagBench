@@ -20,12 +20,21 @@ BeMatrixInversion class >> innerIterations [
 	^ 250
 ]
 
-{ #category : 'initialization' }
-BeMatrixInversion >> initialize [
+{ #category : 'fixThis' }
+BeMatrixInversion >> at: aRow and: aCol put: aValue [
+	"Sets the element at the specified row and column to a new value."
+	(elements at: aRow) at: aCol put: aValue
+]
 
-	super initialize.
-	size := 10.
-	sourceMatrix := random makeInvertable: size
+{ #category : 'fixThis' }
+BeMatrixInversion >> createAugmentedMatrix [
+	"Create an augmented matrix by combining the original matrix
+	   with an identity matrix of the same size."
+
+	| augmentedMatrix identity invertedMatrix Matrix rows |
+	identity := Matrix identity: rows.
+	augmentedMatrix := (1 to: rows) collect: [ :i |
+		(self elements at: i), (identity elements at: i) ].
 ]
 
 { #category : 'fixThis' }
@@ -39,19 +48,45 @@ BeMatrixInversion >> createIdentityMatrix [
 ]
 
 { #category : 'fixThis' }
-BeMatrixInversion >> at: aRow and: aCol put: aValue[
-	"Sets the element at the specified row and column to a new value."
-	(elements at: aRow) at: aCol put: aValue]
+BeMatrixInversion >> extractInverseMatrix [
 
-{ #category : 'fixThis' }
-BeMatrixInversion >> createAugmentedMatrix [
-	"Create an augmented matrix by combining the original matrix
-	   with an identity matrix of the same size."
+| invertedMatrix Matrix rows augmentedMatrix aStream|
 
-	| augmentedMatrix identity invertedMatrix Matrix rows |
-	identity := Matrix identity: rows.
-	augmentedMatrix := (1 to: rows) collect: [ :i |
-		(self elements at: i), (identity elements at: i) ].
+invertedMatrix := (1 to: rows) collect: [ :i |
+		(augmentedMatrix at: i) copyFrom: rows + 1 to: rows * 2 ].
+
+	^ Matrix from: invertedMatrix.
+
+	"Prints a representation of the matrix to a stream."
+	aStream nextPutAll: 'Matrix('; nextPutAll: self rows asString; nextPutAll: 'x'; nextPutAll: self cols asString; nextPutAll: ')'.
+	self elements do: [ :row |
+		aStream cr; nextPutAll: '  '; nextPutAll: row printString.
+	].
+]
+
+{ #category : 'initialization' }
+BeMatrixInversion >> initialize [
+
+	super initialize.
+	size := 10.
+	sourceMatrix := random makeInvertable: size
+]
+
+{ #category : 'running' }
+BeMatrixInversion >> innerBenchmarkLoop: iterations [
+
+	| result |
+	result := true.
+	1 to: iterations do: [ :i | result := result and: self multiplyInverse ].
+	^ result
+]
+
+{ #category : 'running' }
+BeMatrixInversion >> multiplyInverse [ 
+	" calculate the inverse of sourceMatrix - non-destructively "
+	" then multiply that by sourceMatrix and return true if the result is close to an identity matrix, else false "
+	" please just do this... connect the pieces you have "
+	^ false
 ]
 
 { #category : 'fixThis' }
@@ -90,7 +125,7 @@ BeMatrixInversion >> performGaussianElimination [
 ]
 
 { #category : 'fixThis' }
-BeMatrixInversion >> swapRowsIfHigherRowsFound	[
+BeMatrixInversion >> swapRowsIfHigherRowsFound [	
 | tempRow maxRow pivotRow augmentedMatrix|
 	maxRow ~= pivotRow ifTrue: [
 			
@@ -98,38 +133,4 @@ BeMatrixInversion >> swapRowsIfHigherRowsFound	[
 			augmentedMatrix at: pivotRow put: (augmentedMatrix at: maxRow).
 			augmentedMatrix at: maxRow put: tempRow.
 		].
-]
-
-{ #category : 'fixThis' }
-BeMatrixInversion >> extractInverseMatrix [
-
-| invertedMatrix Matrix rows augmentedMatrix aStream|
-
-invertedMatrix := (1 to: rows) collect: [ :i |
-		(augmentedMatrix at: i) copyFrom: rows + 1 to: rows * 2 ].
-
-	^ Matrix from: invertedMatrix.
-
-	"Prints a representation of the matrix to a stream."
-	aStream nextPutAll: 'Matrix('; nextPutAll: self rows asString; nextPutAll: 'x'; nextPutAll: self cols asString; nextPutAll: ')'.
-	self elements do: [ :row |
-		aStream cr; nextPutAll: '  '; nextPutAll: row printString.
-	].
-]
-
-{ #category : 'running' }
-BeMatrixInversion >> innerBenchmarkLoop: iterations [
-
-	| result |
-	result := true.
-	1 to: iterations do: [ :i | result := result and: self multiplyInverse ].
-	^ result
-]
-
-{ #category : 'running' }
-BeMatrixInversion >> multiplyInverse [ 
-	" calculate the inverse of sourceMatrix - non-destructively "
-	" then multiply that by sourceMatrix and return true if the result is close to an identity matrix, else false "
-	
-	^ false
 ]
