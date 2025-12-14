@@ -66,6 +66,8 @@ columns := sourceMatrix columns.
             value := sourceMatrix at: i and: j.
             expected := (i = j) ifTrue: [ 1 ] ifFalse: [ 0 ].
         ]
+	]
+] .
 
 
 
