@@ -46,7 +46,7 @@ BeMatrixInversion >> multiplyInverse [
 	" please just do this... connect the pieces you have "
 
 	| x resultMatrix |
-	x := sourceMatrix invert.
+	x := sourceMatrix inverted.
 	resultMatrix := x * sourceMatrix.
 	^ resultMatrix isIdentityMatrix
 ]
