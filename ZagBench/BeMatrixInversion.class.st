@@ -21,9 +21,13 @@ BeMatrixInversion class >> innerIterations [
 
 { #category : 'initialization' }
 BeMatrixInversion >> initialize [
-
+|matrix augmented maxRow|
 	super initialize.
 	size := 10.
+	matrix:= OrderedCollection new.
+	augmented :=OrderedCollection new.
+	maxRow:= 1.
+
 	sourceMatrix := BeMatrix with: (random makeInvertable: size)
 ]
 
@@ -42,11 +46,13 @@ BeMatrixInversion >> multiplyInverse [
 	" calculate the inverse of sourceMatrix - non-destructively "
 
 	" then multiply that by sourceMatrix and return true if the result is close to an identity matrix, else false "
-
-	" please just do this... connect the pieces you have "
-
 	| x resultMatrix |
 	x := sourceMatrix inverted.
 	resultMatrix := x * sourceMatrix.
 	^ resultMatrix isIdentityMatrix
+]
+
+{ #category : 'accessing' }
+BeMatrixInversion >> sourceMatrix [
+	^ sourceMatrix 
 ]
