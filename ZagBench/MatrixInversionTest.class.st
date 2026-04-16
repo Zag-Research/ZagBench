@@ -21,16 +21,6 @@ Transcript show: 'Inverse Matrix:'; cr.
 	1 to: m sourceMatrix size do: [ :col |
 		Transcript show: ((result at: row and: col)printString), '' ].
 	Transcript cr ].
-
-
-
-
-"m with: #(    
-#(1.0 2.0 3.0)
-#(0.0 4.0 5.0)
-#(1.0 0.0 6.0)
-).
-"
 ]
 
 { #category : 'tests' }
@@ -58,5 +48,5 @@ m with: #(
 #(0.0 4.0 5.0)
 #(1.0 0.0 6.0)
 ).
-Transcript show:'size:',m size printString; cr.
+Transcript show:'size:',m size printString; cr.  " Type without the method name in playground"
 ]
