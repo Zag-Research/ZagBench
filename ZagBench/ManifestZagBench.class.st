@@ -39,6 +39,13 @@ ManifestZagBench class >> ruleRefersToClassRuleV1FalsePositive [
 ]
 
 { #category : 'code-critics' }
+ManifestZagBench class >> ruleUnclassifiedMethodsRuleV1FalsePositive [
+
+	<ignoreForCoverage>
+	^ #(#(#(#RGMethodDefinition #(#'BeFannkuchSimple class' #fannkuch: #true)) #'2026-04-09T20:07:50.034221-04:00') )
+]
+
+{ #category : 'code-critics' }
 ManifestZagBench class >> ruleWhileTrueRuleV1FalsePositive [
 
 	<ignoreForCoverage>

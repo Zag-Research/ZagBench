@@ -52,40 +52,37 @@ BeMatrix >> columns [
 ]
 
 { #category : 'as yet unclassified' }
-BeMatrix >> eliminateRows [
-"STEP 5: Eliminate all other rows in this column (make them 0)"
-       
-|col|
-        1 to: self size do: [ :row |
-            row ~= col ifTrue: [
-                | factor |
-                factor := (augmented at: row) at: col.
-                1 to: self size * 2 do: [ :j |
-                    (augmented at: row) at: j put: ((augmented at: row) at: j) - (factor * ((augmented at: col) at: j)) ] ] ] .
-]
-
-{ #category : 'as yet unclassified' }
 BeMatrix >> eliminateRows: col [
-"Eliminate all other rows in this column (make them 0)"
-      
-        1 to: self size do: [ :row |
-            row ~= col ifTrue: [
-                | factor |
-                factor := (augmented at: row) at: col.
-                1 to: self size * 2 do: [ :j |
-                    (augmented at: row) at: j put: ((augmented at: row) at: j) - (factor * ((augmented at: col) at: j)) ] ] ] .
+    | factor |
+    1 to: self size do: [ :row |
+        row ~= col ifTrue: [
+            factor := (augmented at: row) at: col.
+            1 to: self size * 2 do: [ :j |
+                (augmented at: row) at: j put:
+                    ((augmented at: row) at: j) - 
+                    (factor * ((augmented at: col) at: j)) ] ] ].
+
 ]
 
 { #category : 'as yet unclassified' }
 BeMatrix >> extractMatrix [
-"Extract the right half of x into a new resultMatrix"
-    |resultMatrix|
-    resultMatrix := self class new: self size.
-    1 to: self size do: [ :row |
-        1 to: self size do: [ :col |
-            (resultMatrix matrix at: row) at: col put: ((augmented at: row) at: col + self size) ] ].
-
+    | resultMatrix row |
+    resultMatrix := self class new.
+    1 to: self size do: [ :r |
+        row := OrderedCollection new.
+        1 to: self size do: [ :c |
+            row add: ((augmented at: r) at: c + self size) ].
+        resultMatrix matrix add: row ].
     ^ resultMatrix
+]
+
+{ #category : 'initialization' }
+BeMatrix >> initialize [
+    matrix := OrderedCollection new.
+    augmented := OrderedCollection new.
+    maxRow := 1.
+
+
 ]
 
 { #category : 'running' }
@@ -101,7 +98,6 @@ BeMatrix >> inverted [
 	[ col <= n ] whileTrue: [  
 	" x is now the full augmented matrix "
 	" now do Gaussian elimination on x "
-	" ... "
 	" then extract right 1/2 of each row of x into a new matrix "
 	maxRow := self partialPivoting: col.
 	r:= self swapRows: col.
@@ -109,13 +105,16 @@ BeMatrix >> inverted [
 	r:= self eliminateRows: col.
 	
 	col := col + 1. ].
+	resultMatrix := self extractMatrix.
+    augmented := OrderedCollection new.
+    ^ resultMatrix .
 	
-
-	resultMatrix := self class new: self size.
+	"resultMatrix := self class new: self size."
 	" extrac the resultMatric from the augmented matrix "
 	resultMatrix := self extractMatrix.
 	augmented := nil.
 	^ resultMatrix.
+
 
 	
 
@@ -128,31 +127,28 @@ BeMatrix >> inverted [
 
 { #category : 'as yet unclassified' }
 BeMatrix >> isIdentityMatrix [
-	"checks for identity matrix"
-
-	| rows columns |
-	rows := self rows.
-	columns := self columns.
-
-	1 to: rows do: [ :i |
-			1 to: columns do: [ :j |
-					| value expected |
-					value := self at: i and: j.
-					expected := i = j
-						            ifTrue: [ 1 ]
-						            ifFalse: [ 0 ].
-					value = expected ifFalse: [ ^ false ] ] ].
-	^ true
+    | rows columns value expected |
+    rows := self rows.
+    columns := self columns.
+    1 to: rows do: [ :i |
+        1 to: columns do: [ :j |
+            value := self at: i and: j.
+            expected := i = j ifTrue: [ 1 ] ifFalse: [ 0 ].
+            (value - expected) abs > 1.0e-10 ifTrue: [ ^ false ] ] ].
+    ^ true
 ]
 
 { #category : 'running' }
 BeMatrix >> makeAugmented [
-	augmented := ((1 to: self size) collect: [ : row | |r|
-		 r := Array new: self size * 2.
-		 r replaceFrom: 1 to: self size with: (matrix at: row) startingAt: 1.
-		 1 to: self size do: [ : col | r at: col + self size put: (row = col ifTrue: [ 1.0 ] ifFalse: [ 0.0 ] ) ].
-		r
-		]) asOrderedCollection .
+    | row |
+    augmented := OrderedCollection new.
+    1 to: self size do: [ :r |
+        row := OrderedCollection new.
+        1 to: self size do: [ :c |
+            row add: ((matrix at: r) at: c) asFloat ].   "adds left half"
+        1 to: self size do: [ :c |
+            row add: (r = c ifTrue: [ 1.0 ] ifFalse: [ 0.0 ]) ].  "adds right half"
+        augmented add: row ].
 ]
 
 { #category : 'accessing' }
@@ -161,37 +157,16 @@ BeMatrix >> matrix [
 ]
 
 { #category : 'as yet unclassified' }
-BeMatrix >> partialPivoting [
-
-|maxVal maxRow val|
-
-1 to: self size do: [ :col |
-        maxRow := col.
-        maxVal := ((augmented at: col) at: col) abs.
-
-       col + 1 to: self size do: [ :row |
-    
-            val := ((augmented at: row) at: col) abs.
-            val > maxVal ifTrue: [
-                maxVal := val.
-                maxRow := row ] ].]
-]
-
-{ #category : 'as yet unclassified' }
 BeMatrix >> partialPivoting: col [
-
-|maxVal val |
-        maxRow := col.
-        maxVal := ((augmented at: col) at: col) abs.
-
-       col + 1 to: self size do: [ :row |
-    
-            val := ((augmented at: row) at: col) abs.
-            val > maxVal ifTrue: [
-                maxVal := val.
-                maxRow := row ] ].
- 		^maxRow 
-
+    | maxVal val |
+    maxRow := col.
+    maxVal := ((augmented at: col) at: col) abs.
+    col + 1 to: self size do: [ :row |
+        val := ((augmented at: row) at: col) abs.
+        val > maxVal ifTrue: [
+            maxVal := val.
+            maxRow := row ] ].
+    ^ maxRow
 ]
 
 { #category : 'accessing' }
@@ -218,26 +193,29 @@ BeMatrix >> rows [
 ]
 
 { #category : 'as yet unclassified' }
-BeMatrix >> scalingPivot [
-| pivot col|
-
-col :=1.
-        pivot := (augmented at: col) at: col.
-        1 to: self size * 2 do: [ :j |
-            (augmented at: col) at: j put: ((augmented at: col) at: j) / pivot ].
+BeMatrix >> scalingPivot: col [
+    | pivot |
+    pivot := (augmented at: col) at: col.
+    1 to: self size * 2 do: [ :j |
+        (augmented at: col) at: j put: ((augmented at: col) at: j) / pivot. ]
 ]
 
-{ #category : 'as yet unclassified' }
-BeMatrix >> scalingPivot: col [
-| pivot |
-        pivot := (augmented at: col) at: col.
-        1 to: self size * 2 do: [ :j |
-            (augmented at: col) at: j put: ((augmented at: col) at: j) / pivot ].
+{ #category : 'initialization' }
+BeMatrix >> setMatrix: aCollection [
+    matrix := OrderedCollection new.
+    aCollection collect: [ :row |
+        | newRow |
+        newRow := OrderedCollection new.
+        row collect: [ :val | newRow add: val asFloat ].
+        matrix add: newRow ].
+    augmented := OrderedCollection new.
+    maxRow := 1.
+
 ]
 
 { #category : 'accessing' }
 BeMatrix >> size [
-	matrix isNil ifTrue: [ ^ 0 ].
+	matrix ifNil: [ ^ 0 ].
 	^matrix size
 	"^ self rows"
 ]
@@ -250,41 +228,14 @@ BeMatrix >> size: size [
 ]
 
 { #category : 'as yet unclassified' }
-BeMatrix >> swapRows [
-"Swap current row with the highest row if needed"
-       
-|maxRow temp  col|
-col := 1.
-maxRow := col.
-
-        maxRow ~= col ifTrue: [
-            temp := augmented at: col.
-            augmented at: col put: (augmented at: maxRow).
-            augmented at: maxRow put: temp ].
-
-        "Check for singular matrix (pivot is zero)"
-        
-        ((augmented at: col) at: col) abs < 1.0e-10 ifTrue: [
-            ^ self error: 'Matrix is singular - cannot be inverted' ].
-
-]
-
-{ #category : 'as yet unclassified' }
 BeMatrix >> swapRows: col [
-"Swap current row with the highest row if needed"
-       
-|temp |
-
-        maxRow ~= col ifTrue: [
-            temp := augmented at: col.
-            augmented at: col put: (augmented at: maxRow).
-            augmented at: maxRow put: temp ].
-
-        "Check for singular matrix (pivot is zero)"
-        
-        ((augmented at: col) at: col) abs < 1.0e-10 ifTrue: [
-            ^ self error: 'Matrix is singular - cannot be inverted' ].
-
+    | temp |
+    maxRow ~= col ifTrue: [
+        temp := augmented at: col.
+        augmented at: col put: (augmented at: maxRow).
+        augmented at: maxRow put: temp ].
+    ((augmented at: col) at: col) abs < 1.0e-10 ifTrue: [
+        ^ self error: 'Matrix is singular - cannot be inverted' ].
 ]
 
 { #category : 'accessing' }
