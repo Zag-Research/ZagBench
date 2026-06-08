@@ -93,3 +93,32 @@ BeFannkuchSimple >> fannkuch: n [
         foundNext ifFalse: [ ^ Array with: checksum with: maxFlips ].
     ]
 ]
+
+{ #category : 'benchmarking' }
+BeFannkuchSimple >> solve: n [
+
+	| maxCount checkSum flips toFlip permCount array |
+	maxCount := 0.
+	checkSum := 0.
+	permCount := 0.
+	(1 to: n) permutationsDo: [ : permutation|
+		permutation first ~= 1 ifTrue: [
+			array := permutation copy.
+			flips := 0.
+			[ (toFlip := array at: 1) = 1 ] whileFalse: [
+				"self halt."
+				flips := flips + 1.
+				1 to: toFlip // 2 do: [ : i | |temp target|
+					target := toFlip - i + 1.
+					temp := array at: i.
+					array at: i put: (array at: target).
+					array at: target put: temp
+				]
+			].
+			maxCount := maxCount max: flips.
+			checkSum := checkSum + (permCount even ifTrue: [flips] ifFalse: [flips negated] )
+		].
+		permCount := permCount + 1.
+	].
+	^ {checkSum . maxCount}
+]
