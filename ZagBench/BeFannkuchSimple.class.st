@@ -1,9 +1,9 @@
 Class {
 	#name : 'BeFannkuchSimple',
 	#superclass : 'Object',
-	#category : 'ZagBench-BeFannkuchSimple',
+	#category : 'ZagBench-FannkuchSimple',
 	#package : 'ZagBench',
-	#tag : 'BeFannkuchSimple'
+	#tag : 'FannkuchSimple'
 }
 
 { #category : 'benchmarking' }

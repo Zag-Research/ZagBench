@@ -7,9 +7,9 @@ Class {
 		'root',
 		'random'
 	],
-	#category : 'ZagBench-BeRandomTrees',
+	#category : 'ZagBench-RandomTrees',
 	#package : 'ZagBench',
-	#tag : 'BeRandomTrees'
+	#tag : 'RandomTrees'
 }
 
 { #category : 'as yet unclassified' }
