@@ -1,49 +1,26 @@
 Class {
 	#name : 'BeFannkuchSimple',
 	#superclass : 'Object',
-	#category : 'ZagBench-BeFannkuchSimple',
+	#category : 'ZagBench-FannkuchSimple',
 	#package : 'ZagBench',
-	#tag : 'BeFannkuchSimple'
+	#tag : 'FannkuchSimple'
 }
 
 { #category : 'benchmarking' }
-BeFannkuchSimple >> benchmark: n [
-    "Run with timing information"
-    | result time checksum maxFlips |
-    
-    Transcript show: '=== Fannkuch Redux Benchmark ==='; cr.
-    Transcript show: 'Size: ', n asString; cr; cr.
-    
-    time := [ result := self fannkuch: n ] timeToRun.
-    
-    checksum := result at: 1.
-    maxFlips := result at: 2.
-    
-    Transcript show: 'Checksum: ', checksum asString; cr.
-    Transcript show: 'Max Flips: ', maxFlips asString; cr.
-    Transcript show: 'Time: ', time asString, ' ms'; cr.
-    
-    ^ result.
-]
-
-{ #category : 'as yet unclassified' }
 BeFannkuchSimple >> fannkuch: n [
-    "Fannkuch-Redux: returns Array with: checksum with: maxFlips"
     | perm1 perm count maxFlips permCount checksum r flips k foundNext |
-
-    perm1 := (1 to: n) asArray. 
+    perm1 := (1 to: n) asArray.
     perm  := Array new: n.
     count := Array new: n + 1 withAll: 0.
-
     maxFlips  := 0.
     permCount := 0.
     checksum  := 0.
-    r         := n .
+    r         := n.
 
     [ true ] whileTrue: [
 
-        "Refill counts for positions that exhausted"
-        [ r > 1 ] whileTrue: [
+        "Refill wheels that exhausted — only touches indices 2..n"
+        [ r > 1 and: [ (count at: r) = 0 ] ] whileTrue: [
             count at: r put: r.
             r := r - 1
         ].
@@ -72,24 +49,23 @@ BeFannkuchSimple >> fannkuch: n [
         permCount := permCount + 1.
 
         "Generate next permutation"
+        "r walks 1..n-1 only. count[r+1] touches indices 2..n which refill owns."
         r := 1.
         foundNext := false.
-        [ r <= n ] whileTrue: [
+        [ r < n ] whileTrue: [
             | first |
-            first := perm1 at: 1.
-            1 to: r do: [ :i | perm1 at: i put: (perm1 at: i + 1) ].
-            perm1 at: r + 1 put: first.
-
             count at: r + 1 put: (count at: r + 1) - 1.
             (count at: r + 1) > 0
                 ifTrue: [
+                    first := perm1 at: 1.
+                    1 to: r do: [ :i | perm1 at: i put: (perm1 at: i + 1) ].
+                    perm1 at: r + 1 put: first.
                     foundNext := true.
-                    r := n +1.      "force loop exit"
+                    r := n.    "n < n is false — exits loop"
                 ]
                 ifFalse: [ r := r + 1 ]
         ].
 
-        "foundNext = false means r walked all the way to n → all perms done"
         foundNext ifFalse: [ ^ Array with: checksum with: maxFlips ].
     ]
 ]

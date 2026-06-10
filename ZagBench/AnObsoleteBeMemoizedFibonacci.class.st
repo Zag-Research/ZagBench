@@ -1,5 +1,5 @@
 Class {
-	#name : 'BeMemoizedFibonacci',
+	#name : 'AnObsoleteBeMemoizedFibonacci',
 	#superclass : 'Object',
 	#instVars : [
 		'cache'
@@ -10,12 +10,12 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-BeMemoizedFibonacci >> clearCache [
+AnObsoleteBeMemoizedFibonacci >> clearCache [
     cache := Dictionary new.
 ]
 
 { #category : 'as yet unclassified' }
-BeMemoizedFibonacci >> fibMemo: n [
+AnObsoleteBeMemoizedFibonacci >> fibMemo: n [
     "Return cached result if exists, otherwise calculate and cache"
     | result |
     
@@ -29,8 +29,8 @@ BeMemoizedFibonacci >> fibMemo: n [
     ^ result.
 ]
 
-{ #category : 'initialization' }
-BeMemoizedFibonacci >> initialize [
+{ #category : 'as yet unclassified' }
+AnObsoleteBeMemoizedFibonacci >> initialize [
     super initialize.
     cache := Dictionary new.
 ]

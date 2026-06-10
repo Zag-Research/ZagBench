@@ -7,10 +7,38 @@ Class {
 		'root',
 		'random'
 	],
-	#category : 'ZagBench-BeRandomTrees',
+	#category : 'ZagBench-RandomTrees',
 	#package : 'ZagBench',
-	#tag : 'BeRandomTrees'
+	#tag : 'RandomTrees'
 }
+
+{ #category : 'building' }
+BeRandomTrees >> build [
+    "Build a random tree with nodeCount nodes, each having up to maxChildren children."
+    | queue current childCount child created |
+    root := RandomTreeNode new.
+    root value: 0.
+    queue := OrderedCollection new.
+    queue addLast: root.
+    created := 1.
+
+    [created < nodeCount and: [queue notEmpty]] whileTrue: [
+        current := queue removeFirst.
+        childCount := 1 + (random nextInteger: maxChildren).
+        1 to: childCount do: [:i |
+            created < nodeCount ifTrue: [
+                child := RandomTreeNode new.
+                child value: created.
+                current addChild: child.
+                queue addLast: child.
+                created := created + 1
+            ]
+        ]
+    ].
+
+    
+    ^ self
+]
 
 { #category : 'as yet unclassified' }
 BeRandomTrees >> cutHalfSubtrees [
@@ -31,9 +59,7 @@ BeRandomTrees >> cutHalfSubtrees [
         ]
     ].
 
-    Transcript
-        show: 'Cut ~50%% of subtrees. Approx ', cutCount printString, ' nodes now GC eligible.';
-        nl.
+    
     ^ self
 ]
 
@@ -43,7 +69,7 @@ BeRandomTrees >> cutRandomSubtree [
     | allNodes pick parent cutSize |
     allNodes := root allNodes.
     allNodes size <= 1 ifTrue: [
-        Transcript show: 'Tree is empty or has only root — nothing to cut.'; nl.
+        
         ^ self
     ].
 
@@ -59,19 +85,31 @@ BeRandomTrees >> cutRandomSubtree [
         pick parent: nil.
     ].
 
-    Transcript
-        show: 'Cut subtree of ', cutSize printString,
-              ' nodes (root was node #', pick value printString, '). Now unreachable — GC eligible.';
-        nl.
+    
+    ^ self
+]
+
+{ #category : 'as yet unclassified' }
+BeRandomTrees >> fullGarbageCollect [
+    "Trigger Pharo's full GC — scans old space too, reclaims all unreachable objects."
+    
+    ^  Smalltalk fullGarbageCollect.
+   
+]
+
+{ #category : 'memory space' }
+BeRandomTrees >> garbageCollect [
+    "Trigger Pharo's incremental/minor GC (scavenges young space)."
+    Smalltalk garbageCollect.
     ^ self
 ]
 
 { #category : 'as yet unclassified' }
 BeRandomTrees >> initialize [
     
-| tree nodeCount maxChildren random root |
+| tree  |
 
-tree := BeRandomTrees new .
+tree := self new .
     nodeCount := 1000.
     maxChildren := 4.
     random := Random new.
@@ -88,6 +126,12 @@ Smalltalk garbageCollect.
 Smalltalk fullGarbageCollect.
 ]
 
+{ #category : 'as yet unclassified' }
+BeRandomTrees >> liveNodes [
+    root ifNil: [^ OrderedCollection new].
+    ^ root allNodes
+]
+
 { #category : 'accessing' }
 BeRandomTrees >> maxChildren: anInteger [
     maxChildren := anInteger
@@ -100,7 +144,7 @@ BeRandomTrees >> nodeCount: anInteger [
 
 { #category : 'as yet unclassified' }
 BeRandomTrees >> randomTree [
-| tree nodeCount maxChildren  build |
+| tree  build |
 
 tree := BeRandomTrees new .
     nodeCount:= 5000.
