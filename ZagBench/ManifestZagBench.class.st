@@ -24,6 +24,13 @@ ManifestZagBench class >> ruleLongMethodsRuleV1FalsePositive [
 ]
 
 { #category : 'code-critics' }
+ManifestZagBench class >> ruleReCollectionAtCollectionSizeRuleV1FalsePositive [
+
+	<ignoreForCoverage>
+	^ #(#(#(#RGMethodDefinition #(#SequenceableCollection #fkPermutationsDo: #false)) #'2026-06-24T17:52:04.992888-04:00') )
+]
+
+{ #category : 'code-critics' }
 ManifestZagBench class >> ruleReCyclomaticComplexityRuleV1FalsePositive [
 
 	<ignoreForCoverage>

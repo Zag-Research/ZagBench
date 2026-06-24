@@ -1,9 +1,9 @@
 Class {
 	#name : 'MatrixInversionTest',
 	#superclass : 'TestCase',
-	#category : 'ZagBench-Test',
-	#package : 'ZagBench',
-	#tag : 'Test'
+	#category : 'ZagBench-Tests-MatrixInversion',
+	#package : 'ZagBench-Tests',
+	#tag : 'MatrixInversion'
 }
 
 { #category : 'tests' }

@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'gen'
 	],
-	#category : 'ZagBench-Test',
-	#package : 'ZagBench',
-	#tag : 'Test'
+	#category : 'ZagBench-Tests-Benchmarking',
+	#package : 'ZagBench-Tests',
+	#tag : 'Benchmarking'
 }
 
 { #category : 'running' }

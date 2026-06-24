@@ -71,7 +71,7 @@ BeFannkuchSimple >> solve: n [
 	maxCount := 0.
 	checkSum := 0.
 	permCount := 0.
-	(1 to: n) permutationsDo: [ : permutation|
+	(1 to: n) fkPermutationsDo: [ : permutation|
 		permutation first ~= 1 ifTrue: [
 			array := permutation copy.
 			flips := 0.
