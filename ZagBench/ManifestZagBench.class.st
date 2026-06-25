@@ -10,6 +10,13 @@ Class {
 }
 
 { #category : 'code-critics' }
+ManifestZagBench class >> ruleClassNameInSelectorRuleV1FalsePositive [
+
+	<ignoreForCoverage>
+	^ #(#(#(#RGMethodDefinition #(#'Benchmark class' #allBenchmarks #true)) #'2026-06-25T08:01:53.027236-04:00') )
+]
+
+{ #category : 'code-critics' }
 ManifestZagBench class >> ruleClassNotReferencedRuleV1FalsePositive [
 
 	<ignoreForCoverage>
@@ -27,7 +34,7 @@ ManifestZagBench class >> ruleLongMethodsRuleV1FalsePositive [
 ManifestZagBench class >> ruleReCollectionAtCollectionSizeRuleV1FalsePositive [
 
 	<ignoreForCoverage>
-	^ #(#(#(#RGMethodDefinition #(#SequenceableCollection #fkPermutationsDo: #false)) #'2026-06-24T17:52:04.992888-04:00') )
+	^ #(#(#(#RGMethodDefinition #(#SequenceableCollection #permutationsIteratedDo: #false)) #'2026-06-24T17:52:04.992888-04:00') #(#(#RGMethodDefinition #(#BeFannkuch #solve: #false)) #'2026-06-25T07:52:42.400014-04:00') )
 ]
 
 { #category : 'code-critics' }

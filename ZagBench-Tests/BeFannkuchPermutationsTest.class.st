@@ -9,10 +9,10 @@ Class {
 	#tag : 'Benchmarking'
 }
 
-{ #category : 'test ' }
+{ #category : 'test' }
 BeFannkuchPermutationsTest >> permutationsOF: aCollection [ 
 
-	^ (Array streamContents: [:stream | aCollection fkPermutationsDo: [:each | stream nextPut: each copy]])
+	^ (Array streamContents: [:stream | aCollection permutationsIteratedDo: [:each | stream nextPut: each copy]])
 ]
 
 { #category : 'tests' }
