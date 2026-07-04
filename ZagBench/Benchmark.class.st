@@ -62,7 +62,7 @@ Class {
 	#tag : 'Benchmarking'
 }
 
-{ #category : 'reflective operations' }
+{ #category : 'as yet unclassified' }
 Benchmark class >> allBenchmarks [
 
 	^ self instanceSide subclasses

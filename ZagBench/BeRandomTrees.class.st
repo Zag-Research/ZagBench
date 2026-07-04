@@ -2,9 +2,9 @@ Class {
 	#name : 'BeRandomTrees',
 	#superclass : 'Object',
 	#instVars : [
+		'root',
 		'nodeCount',
 		'maxChildren',
-		'root',
 		'random'
 	],
 	#category : 'ZagBench-RandomTrees',
@@ -14,116 +14,83 @@ Class {
 
 { #category : 'building' }
 BeRandomTrees >> build [
-    "Build a random tree with nodeCount nodes, each having up to maxChildren children."
     | queue current childCount child created |
-    root := RandomTreeNode new.
+    root := self nodeClass new.
     root value: 0.
     queue := OrderedCollection new.
     queue addLast: root.
     created := 1.
-
     [created < nodeCount and: [queue notEmpty]] whileTrue: [
         current := queue removeFirst.
         childCount := 1 + (random nextInteger: maxChildren).
         1 to: childCount do: [:i |
             created < nodeCount ifTrue: [
-                child := RandomTreeNode new.
+                child := self nodeClass new.
                 child value: created.
                 current addChild: child.
                 queue addLast: child.
-                created := created + 1
-            ]
-        ]
-    ].
-
-    
+                created := created + 1]]].
+   
     ^ self
 ]
 
 { #category : 'as yet unclassified' }
 BeRandomTrees >> cutHalfSubtrees [
-    "Cut roughly half the children of each node, freeing large portions of the tree."
-    | allNodes cutCount |
+    | allNodes cutCount toRemove |
     allNodes := root allNodes.
     cutCount := 0.
-
     allNodes do: [:node |
-        | toRemove |
         node children size > 1 ifTrue: [
             toRemove := node children select: [:_ | random next < 0.5].
             toRemove do: [:child |
                 node children remove: child ifAbsent: [].
                 child parent: nil.
-                cutCount := cutCount + child subtreeSize.
-            ]
-        ]
-    ].
-
+                cutCount := cutCount + child subtreeSize]]].
     
     ^ self
 ]
 
 { #category : 'as yet unclassified' }
 BeRandomTrees >> cutRandomSubtree [
-    "Detach a random non-root node and its entire subtree, making it eligible for GC."
     | allNodes pick parent cutSize |
     allNodes := root allNodes.
     allNodes size <= 1 ifTrue: [
-        
-        ^ self
-    ].
-
-    "Remove root from candidates so we never cut the whole tree from root"
+        Transcript show: 'Nothing to cut.'; cr.
+        ^ self].
     allNodes := allNodes select: [:n | n ~= root].
-
     pick := allNodes at: (random nextInteger: allNodes size).
     parent := pick parent.
     cutSize := pick subtreeSize.
-
     parent ifNotNil: [
         parent children remove: pick ifAbsent: [].
-        pick parent: nil.
-    ].
-
+        pick parent: nil].
     
     ^ self
 ]
 
 { #category : 'as yet unclassified' }
-BeRandomTrees >> fullGarbageCollect [
-    "Trigger Pharo's full GC — scans old space too, reclaims all unreachable objects."
-    
-    ^  Smalltalk fullGarbageCollect.
-   
-]
-
-{ #category : 'memory space' }
 BeRandomTrees >> garbageCollect [
-    "Trigger Pharo's incremental/minor GC (scavenges young space)."
-    Smalltalk garbageCollect.
-    ^ self
+	"Primitive. Reclaims all garbage and answers the size of the largest free chunk in old space."
+<primitive: 131>
+	
+	
 ]
 
 { #category : 'as yet unclassified' }
-BeRandomTrees >> initialize [
-    
-| tree  |
+BeRandomTrees >> garbageCollectMost [
+	"Primitive. Reclaims recently created garbage (which is usually most of it) fairly quickly and answers the number of bytes of available space."
 
-tree := self new .
+	<primitive: 131>
+
+]
+
+{ #category : 'initialization' }
+BeRandomTrees >> initialize [
+    super initialize.
     nodeCount := 1000.
     maxChildren := 4.
     random := Random new.
-    root := nil
-    build.
-
-"Cut a subtree — the old references become unreachable"
-tree cutRandomSubtree.
-
-"Force a full GC cycle in Pharo"
-Smalltalk garbageCollect.
-
-"Or to force a full old-space GC:"
-Smalltalk fullGarbageCollect.
+    root := 0.
 ]
 
 { #category : 'as yet unclassified' }
@@ -137,26 +104,27 @@ BeRandomTrees >> maxChildren: anInteger [
     maxChildren := anInteger
 ]
 
+{ #category : 'configuration' }
+BeRandomTrees >> nodeClass [
+	^RandomTreeNode 
+]
+
 { #category : 'accessing' }
 BeRandomTrees >> nodeCount: anInteger [
     nodeCount := anInteger
 ]
 
-{ #category : 'as yet unclassified' }
-BeRandomTrees >> randomTree [
-| tree  build |
+{ #category : 'printing' }
+BeRandomTrees >> printSummary [
+    | live |
+    live := self liveNodes size.
+    Transcript
+        show: '--- Tree Summary ---'; cr;
+        show: 'Live nodes : ', live printString; cr;
+        show: 'Max children: ', maxChildren printString; cr.
+]
 
-tree := BeRandomTrees new .
-    nodeCount:= 5000.
-    maxChildren:=4 .
-    build.
-
-"Cut a subtree — the old references become unreachable"
-tree cutRandomSubtree.
-
-"Force a full GC cycle in Pharo"
-Smalltalk garbageCollect.
-
-"Or to force a full old-space GC:"
-Smalltalk fullGarbageCollect.
+{ #category : 'accessing' }
+BeRandomTrees >> root [
+ ^root
 ]
