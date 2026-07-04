@@ -19,7 +19,7 @@ BeMandelbrot class >> innerIterations [
 	^ 466
 ]
 
-{ #category : 'running' }
+{ #category : 'controlling' }
 BeMandelbrot >> innerBenchmarkLoop: iterations [
 
 	^ self
