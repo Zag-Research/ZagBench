@@ -8,6 +8,9 @@ Derived from https://github.com/smarr/are-we-fast-yet/blob/master/benchmarks/Sma
 Class {
 	#name : 'BeMandelbrot',
 	#superclass : 'Benchmark',
+	#classInstVars : [
+		'sum'
+	],
 	#category : 'ZagBench-Mandelbrot',
 	#package : 'ZagBench',
 	#tag : 'Mandelbrot'

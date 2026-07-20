@@ -28,7 +28,7 @@ BeMatrixInversion >> initialize [
 	augmented :=OrderedCollection new.
 	maxRow:= 1.
 
-	sourceMatrix := BeMatrix with: (random makeInvertable: size)
+	sourceMatrix := BeMatrix new with: (random makeInvertable: size)
 ]
 
 { #category : 'running' }

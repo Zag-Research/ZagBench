@@ -8,3 +8,11 @@ Class {
 	#package : 'ZagBench-Tests',
 	#tag : 'FannkuchSimple'
 }
+
+{ #category : 'tests' }
+BeFannkuchSimpleTest >> testFannkuch [
+
+	self  assert: ( BeFannkuchSimple new fannkuch: 1) equals: #(0 0).
+	self  assert: ( BeFannkuchSimple new fannkuch: 2) equals: #(0 1)
+
+]

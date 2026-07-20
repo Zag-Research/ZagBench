@@ -14,29 +14,10 @@ Class {
 	#tag : 'MatrixInversion'
 }
 
-{ #category : 'converting' }
-BeMatrix class >> asSymbol [
-	self shouldBeImplemented.
-]
-
 { #category : 'instance creation' }
 BeMatrix class >> new: size [
 
 	^ self basicNew size: size
-]
-
-{ #category : 'instance creation' }
-BeMatrix class >> with: aCollection [
-
-|matrix augmented maxRow|
-	matrix:= OrderedCollection new.
-	aCollection collect: [ :row |
-		matrix add: row asOrderedCollection ].
-	augmented := OrderedCollection new.
-	maxRow := 1.
-		
-	
-		 
 ]
 
 { #category : 'accessing' }
@@ -188,7 +169,8 @@ stream := WriteStream on: String new.
 
 { #category : 'accessing' }
 BeMatrix >> rows [
-	matrix isNil ifTrue: [ ^ 0 ].
+
+	matrix ifNil: [ ^ 0 ].
 	^ matrix size
 ]
 
@@ -215,9 +197,8 @@ BeMatrix >> setMatrix: aCollection [
 
 { #category : 'accessing' }
 BeMatrix >> size [
-	matrix ifNil: [ ^ 0 ].
-	^matrix size
-	"^ self rows"
+
+	^ self rows
 ]
 
 { #category : 'accessing' }

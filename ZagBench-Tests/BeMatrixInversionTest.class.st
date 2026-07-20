@@ -1,5 +1,5 @@
 Class {
-	#name : 'MatrixInversionTest',
+	#name : 'BeMatrixInversionTest',
 	#superclass : 'TestCase',
 	#category : 'ZagBench-Tests-MatrixInversion',
 	#package : 'ZagBench-Tests',
@@ -7,7 +7,7 @@ Class {
 }
 
 { #category : 'tests' }
-MatrixInversionTest >> testBeMatrixInversion [
+BeMatrixInversionTest >> testBeMatrixInversion [
 | m result | 
 m :=BeMatrixInversion new.
 m initialize.
@@ -24,7 +24,7 @@ Transcript show: 'Inverse Matrix:'; cr.
 ]
 
 { #category : 'tests' }
-MatrixInversionTest >> testIdentity [
+BeMatrixInversionTest >> testIdentity [
 
 	| matrix |
 	matrix := BeMatrix new: 10.
@@ -33,14 +33,14 @@ MatrixInversionTest >> testIdentity [
 ]
 
 { #category : 'tests' }
-MatrixInversionTest >> testMatrix [ 
+BeMatrixInversionTest >> testMatrix [ 
 |m|
 m:= BeMatrix new.
 Transcript show:'ok'; cr.
 ]
 
 { #category : 'tests' }
-MatrixInversionTest >> testSize [
+BeMatrixInversionTest >> testSize [
 |m|
 m:= BeMatrix new.
 m with: #(    
