@@ -1,5 +1,5 @@
 Class {
-	#name : 'RandomTreeNode',
+	#name : 'BeRandomTreeNode',
 	#superclass : 'BeRandomTrees',
 	#instVars : [
 		'children',
@@ -12,13 +12,13 @@ Class {
 }
 
 { #category : 'adding' }
-RandomTreeNode >> addChild: aNode [
+BeRandomTreeNode >> addChild: aNode [
     aNode parent: self.
     children add: aNode
 ]
 
 { #category : 'helpers' }
-RandomTreeNode >> allNodes [
+BeRandomTreeNode >> allNodes [
     | result |
     result := OrderedCollection new.
     result add: self.
@@ -28,12 +28,12 @@ RandomTreeNode >> allNodes [
 ]
 
 { #category : 'accessing' }
-RandomTreeNode >> children [
+BeRandomTreeNode >> children [
 ^children
 ]
 
 { #category : 'as yet unclassified' }
-RandomTreeNode >> initialize [
+BeRandomTreeNode >> initialize [
     super initialize.
     children := OrderedCollection new.
     value := 0.
@@ -41,17 +41,17 @@ RandomTreeNode >> initialize [
 ]
 
 { #category : 'accessing' }
-RandomTreeNode >> parent [
+BeRandomTreeNode >> parent [
 ^parent 
 ]
 
 { #category : 'accessing' }
-RandomTreeNode >> parent: aNode [
+BeRandomTreeNode >> parent: aNode [
     parent := aNode
 ]
 
 { #category : 'printing' }
-RandomTreeNode >> printOn: aStream [
+BeRandomTreeNode >> printOn: aStream [
     aStream
         nextPutAll: 'RandomTreeNode(';
         print: value;
@@ -59,17 +59,17 @@ RandomTreeNode >> printOn: aStream [
 ]
 
 { #category : 'accessing' }
-RandomTreeNode >> subtreeSize [
+BeRandomTreeNode >> subtreeSize [
     ^ children inject: 1 into: [:sum :child | sum + child subtreeSize]
 ]
 
 { #category : 'evaluating' }
-RandomTreeNode >> value [
+BeRandomTreeNode >> value [
 ^value 
 ]
 
 { #category : 'accessing' }
-RandomTreeNode >> value: anObject [
+BeRandomTreeNode >> value: anObject [
     value := anObject
 
 

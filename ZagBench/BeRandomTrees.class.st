@@ -106,7 +106,7 @@ BeRandomTrees >> maxChildren: anInteger [
 
 { #category : 'configuration' }
 BeRandomTrees >> nodeClass [
-	^RandomTreeNode 
+	^BeRandomTreeNode 
 ]
 
 { #category : 'accessing' }
