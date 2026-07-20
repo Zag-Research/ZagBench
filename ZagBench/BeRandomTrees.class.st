@@ -71,8 +71,8 @@ BeRandomTrees >> cutRandomSubtree [
 { #category : 'as yet unclassified' }
 BeRandomTrees >> garbageCollect [
 	"Primitive. Reclaims all garbage and answers the size of the largest free chunk in old space."
-<primitive: 131>
-	
+
+	Smalltalk garbageCollect
 	
 ]
 
@@ -80,8 +80,8 @@ BeRandomTrees >> garbageCollect [
 BeRandomTrees >> garbageCollectMost [
 	"Primitive. Reclaims recently created garbage (which is usually most of it) fairly quickly and answers the number of bytes of available space."
 
-	<primitive: 131>
-
+	Smalltalk garbageCollectMost
+	
 ]
 
 { #category : 'initialization' }

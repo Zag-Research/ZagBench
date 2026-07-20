@@ -1,5 +1,5 @@
 Class {
-	#name : 'RandomTrees',
+	#name : 'BeRandomTreesTest',
 	#superclass : 'TestCase',
 	#instVars : [
 		'children'
@@ -8,13 +8,13 @@ Class {
 		'andomTreesTest',
 		'randomTreesTest'
 	],
-	#category : 'ZagBench-Test',
-	#package : 'ZagBench',
-	#tag : 'Test'
+	#category : 'ZagBench-Tests-RandomTrees',
+	#package : 'ZagBench-Tests',
+	#tag : 'RandomTrees'
 }
 
 { #category : 'printing' }
-RandomTrees >> printAll [
+BeRandomTreesTest >> printAll [
 
 	| tree ms |
 	Transcript
@@ -66,7 +66,7 @@ RandomTrees >> printAll [
 ]
 
 { #category : 'as yet unclassified' }
-RandomTrees >> randomTreesTest [
+BeRandomTreesTest >> randomTreesTest [
  |tree |
 tree := BeRandomTrees new
     nodeCount: 5000;
