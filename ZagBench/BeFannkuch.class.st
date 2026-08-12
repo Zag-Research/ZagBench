@@ -14,13 +14,13 @@ Class {
 { #category : 'benchmarking' }
 BeFannkuch class >> innerIterations [
 
-	^ 9
+	^ 10
 ]
 
 { #category : 'benchmarking' }
 BeFannkuch class >> mainIterations [
 
-	^ 32
+	^ 2
 ]
 
 { #category : 'running' }
