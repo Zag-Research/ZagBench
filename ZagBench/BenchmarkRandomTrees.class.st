@@ -3,7 +3,6 @@ Class {
 	#superclass : 'BeTreesGenerate',
 	#instVars : [
 		'tree',
-		'seconds',
 		'maxChildren'
 	],
 	#category : 'ZagBench-Benchmarking',

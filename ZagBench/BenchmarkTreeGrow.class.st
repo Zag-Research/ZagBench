@@ -2,9 +2,7 @@ Class {
 	#name : 'BenchmarkTreeGrow',
 	#superclass : 'BeTreesGenerate',
 	#instVars : [
-		'tree',
-		'maxChildren',
-		'seconds'
+		'maxChildren'
 	],
 	#category : 'ZagBench-Benchmarking',
 	#package : 'ZagBench',
@@ -20,7 +18,7 @@ BenchmarkTreeGrow >> benchmark [
 BenchmarkTreeGrow >> benchmark: innerIterations [
     "Build a fresh tree of innerIterations nodes.
      Returns the live node count."
-    
+    |tree |
     tree := BeRandomTreeNode new
         nodeCount: innerIterations;
         maxChildren: maxChildren;

@@ -1,6 +1,9 @@
 Class {
 	#name : 'BeTreesGenerate',
 	#superclass : 'Object',
+	#instVars : [
+		'seconds'
+	],
 	#category : 'ZagBench-Benchmarking',
 	#package : 'ZagBench',
 	#tag : 'Benchmarking'
@@ -71,6 +74,26 @@ BeTreesGenerate >> printStats: stats label: label [
 ]
 
 { #category : 'as yet unclassified' }
+BeTreesGenerate >> run: innerIterations [ 
+    "Run innerBenchmarkLoop: repeatedly until seconds have elapsed.
+     Returns a Dictionary with statistics."
+    | results startTime elapsed ms |
+    results := OrderedCollection new.
+    startTime := DateAndTime now.
+    
+    [
+        elapsed := (DateAndTime now - startTime) totalSeconds.
+        elapsed < seconds
+    ] whileTrue: [
+        ms := Time millisecondsToRun: [
+            self innerBenchmarkLoop: innerIterations].
+        results add: ms.
+    ].
+    
+    ^ self statisticsFrom: results
+]
+
+{ #category : 'as yet unclassified' }
 BeTreesGenerate >> run: innerIterations forSeconds: seconds [
     "Run innerBenchmarkLoop: repeatedly until seconds have elapsed.
      Returns a Dictionary with statistics."
@@ -95,7 +118,7 @@ BeTreesGenerate >> runIterations: innerIterations [
 	"Run innerBenchmarkLoop: repeatedly until seconds elapse.
      Call seconds: first to set duration. Default is 0.4 seconds."
 
-	| results startTime elapsed ms valid seconds|
+	| results startTime elapsed ms valid |
 	results := OrderedCollection new.
 	startTime := DateAndTime now.
 	[
@@ -109,7 +132,6 @@ BeTreesGenerate >> runIterations: innerIterations [
 
 { #category : 'instance creation' }
 BeTreesGenerate >> seconds: afraction [
-|seconds|
 seconds := afraction .
 ]
 

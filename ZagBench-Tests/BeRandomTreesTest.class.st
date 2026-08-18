@@ -21,30 +21,65 @@ Class {
 { #category : 'as yet unclassified' }
 BeRandomTreesTest >> BenchmarkTreeChopTest [
 
-	| bench stats |
-	#( 2000 4000 ) do: [ :n |
+	| bench stats label |
+	#( 20000 40000 80000 ) do: [ :n |
 			#( 4 8 ) do: [ :c |
-					bench := BenchmarkTreeChop new.
-					bench nodeCount: n.
+					bench := BenchmarkRandomTrees new.
 					bench maxChildren: c.
 					bench seconds: 0.4.
-					bench prepareTree.
-					stats := bench runIterations: 10.
-					bench printStats: stats label: 'CHOP | nodes: ' , n printString , ' | children: ' , c printString ] ]
+					stats := bench runIterations: n.
+					label := String streamContents: [ :stream |
+							         stream
+								         nextPutAll: 'Chop | nodes: ';
+								         print: n;
+								         nextPutAll: '| children: ';
+								         print: c ].
+					bench printStats: stats label: label ] ]
 ]
 
 { #category : 'as yet unclassified' }
 BeRandomTreesTest >> BenchmarkTreeGrowTest [
 
-	| bench stats |
+	| bench stats label |
 	Transcript
 		open;
 		clear.
-	#( 2000 4000 ) do: [ :n |
+	Transcript
+		show: 'GROW BENCHMARKS';
+		show: String lf.
+	#( 20000 40000 80000 ) do: [ :n |
 			#( 4 8 ) do: [ :c |
 					bench := BenchmarkTreeGrow new.
 					bench maxChildren: c.
 					bench seconds: 0.4.
 					stats := bench runIterations: n.
-					bench printStats: stats label: 'GROW | nodes: ' , n printString , ' | children: ' , c printString ] ]
+					label := String streamContents: [ :stream |
+							         stream
+								         nextPutAll: 'GROW | nodes: ';
+								         print: n;
+								         nextPutAll: ' | children: ';
+								         print: c ].
+					bench printStats: stats label: label ] ]
+]
+
+{ #category : 'benchmarking' }
+BeRandomTreesTest >> benchmarkFullGC [
+
+	| bench stats label |
+	Transcript
+		show: 'FULL GC BENCHMARKS';
+		show: String lf.
+	#( 20000 40000 80000 ) do: [ :n |
+			#( 4 8 ) do: [ :c |
+					bench := BenchmarkRandomTrees new.
+					bench maxChildren: c.
+					bench seconds: 0.4.
+					stats := bench runIterations: n.
+					label := String streamContents: [ :stream |
+							         stream
+								         nextPutAll: 'Full GC| nodes:';
+								         print: n;
+								         nextPutAll: ' | children: ';
+								         print: c ].
+					bench printStats: stats label: label ] ]
 ]

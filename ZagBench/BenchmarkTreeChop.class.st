@@ -1,16 +1,18 @@
 Class {
 	#name : 'BenchmarkTreeChop',
-	#superclass : 'BeTreesGenerate',
+	#superclass : 'BenchmarkRandomTrees',
 	#instVars : [
-		'nodeCount',
-		'tree',
-		'maxChildren',
-		'seconds'
+		'nodeCount'
 	],
 	#category : 'ZagBench-Benchmarking',
 	#package : 'ZagBench',
 	#tag : 'Benchmarking'
 }
+
+{ #category : 'as yet unclassified' }
+BenchmarkTreeChop >> benchmark [
+	^ self shouldBeImplemented
+]
 
 { #category : 'benchmarking' }
 BenchmarkTreeChop >> benchmark: innerIterations [
@@ -51,8 +53,7 @@ maxChildren := anInteger
 
 { #category : 'accessing' }
 BenchmarkTreeChop >> nodeCount: anInteger [
-
-    nodeCount := anInteger
+nodeCount := anInteger
 ]
 
 { #category : 'as yet unclassified' }
