@@ -1,26 +1,10 @@
 Class {
 	#name : 'BeTreesGenerate',
 	#superclass : 'Object',
-	#instVars : [
-		'seconds'
-	],
-	#category : 'ZagBench-Benchmarking',
+	#category : 'ZagBench-RandomTrees',
 	#package : 'ZagBench',
-	#tag : 'Benchmarking'
+	#tag : 'RandomTrees'
 }
-
-{ #category : 'benchmarking' }
-BeTreesGenerate >> benchmark [
-    "Subclasses override this to run one unit of work.
-     Returns a result that verify: can check."
-    ^ self subclassResponsibility
-]
-
-{ #category : 'benchmarking' }
-BeTreesGenerate >> benchmark: innerIterations [
-    "Subclasses override if they need innerIterations passed in."
-    ^ self benchmark
-]
 
 { #category : 'as yet unclassified' }
 BeTreesGenerate >> buildStats: results [
@@ -45,18 +29,6 @@ BeTreesGenerate >> buildStats: results [
         at: #maxMs put: max;
         at: #meanMs put: mean;
         yourself
-]
-
-{ #category : 'running' }
-BeTreesGenerate >> innerBenchmarkLoop: innerIterations [
-    "Run benchmark innerIterations times and verify each result."
-    ^ self verifyResult: (self benchmark: innerIterations)
-]
-
-{ #category : 'accessing' }
-BeTreesGenerate >> maxChildren: anInteger [
-    | maxChildren |
-maxChildren := anInteger
 ]
 
 { #category : 'printing' }
@@ -152,10 +124,4 @@ BeTreesGenerate >> statisticsFrom: results [
         at: #meanMs put: mean;
         at: #results put: results;
         yourself
-]
-
-{ #category : 'as yet unclassified' }
-BeTreesGenerate >> verifyResult: result [
-    "Subclasses override to validate the result of benchmark."
-    ^ self subclassResponsibility
 ]

@@ -1,6 +1,9 @@
 Class {
 	#name : 'BeDataFrame',
 	#superclass : 'Benchmark',
+	#instVars : [
+		'columns'
+	],
 	#classVars : [
 		'DataFrame'
 	],
@@ -9,37 +12,37 @@ Class {
 	#tag : 'DataFrame'
 }
 
+{ #category : 'rendering' }
+BeDataFrame >> columnNames [ 
+^columns
+]
+
 { #category : 'as yet unclassified' }
 BeDataFrame >> dataSetFile [
-
-^ 'data/mnist_test.csv' asFileReference
-
-
-
-
+    ^ 'data/mnist_test.csv' asFileReference
 ]
 
 { #category : 'running' }
-BeDataFrame >> innerBenchmarkLoop: innerIterations [
+BeDataFrame >> innerBenchmarkLoop [
     ^ self verify: (self loadDataFrame: innerIterations) inner: innerIterations
 ]
 
 { #category : 'as yet unclassified' }
-BeDataFrame >> loadDataFrame: innerIterations [
-    | header rows csvString |
-    header := self rawLines first.
-    rows := (self rawLines allButFirst) first: innerIterations.
+BeDataFrame >> loadDataFrame: iterations [
+    | allLines header rows csvString |
+    allLines := self rawLines.
+    header := allLines first.
+    rows := (allLines allButFirst) first: iterations.
     csvString := String streamContents: [ :s |
         s nextPutAll: header; cr.
         rows do: [ :line | s nextPutAll: line; cr ] ].
-    ^ DataFrame readFromCsv: csvString
-
+    ^ DataFrame readFromCsvHandRolled: csvString
 ]
 
 { #category : 'as yet unclassified' }
 BeDataFrame >> rawLines [
+    ^ self dataSetFile contents lines
 
-^ 'data/mnist_test.csv' asFileReference
 ]
 
 { #category : 'as yet unclassified' }
@@ -58,15 +61,26 @@ BeDataFrame >> readFromCsv: aCsvString [
 	
 ]
 
+{ #category : 'as yet unclassified' }
+BeDataFrame >> readFromCsvHandRolled: aCsvString [
+    | lines header parsedRows |
+    lines := aCsvString lines reject: [ :l | l isEmpty ].
+    header := (lines first findTokens: ',') collect: [ :tok | tok trimSeparators ].
+    parsedRows := (lines allButFirst) collect: [ :line |
+        (line findTokens: ',') collect: [ :tok | tok trimSeparators ] ].
+    ^ DataFrame withRows: parsedRows columnNames: header
+]
+
+{ #category : 'as yet unclassified' }
+BeDataFrame >> trimSeparators [
+]
+
 { #category : 'verification' }
 BeDataFrame >> verify: result inner: innerIterations [
     (result isKindOf: DataFrame) ifFalse: [ ^ false ].
-    result numberOfRows = innerIterations ifFalse: [
-        Transcript showCr: 'Expected ', innerIterations asString,
-            ' rows, got ', result numberOfRows asString.
-        ^ false ].
-    result numberOfColumns = 785 ifFalse: [
-        Transcript showCr: 'Expected 785 columns, got ', result numberOfColumns asString.
-        ^ false ].
+    result numberOfRows = innerIterations ifFalse: [ ^ false ].
+    result numberOfColumns = 785 ifFalse: [ ^ false ].
     ^ true
+
+
 ]

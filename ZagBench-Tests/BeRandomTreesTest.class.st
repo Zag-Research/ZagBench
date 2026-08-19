@@ -8,10 +8,7 @@ Class {
 		'BenchmarkTreeChopTest'
 	],
 	#classInstVars : [
-		'andomTreesTest',
-		'randomTreesTest',
-		'bench',
-		'stats'
+		'randomTreesTest'
 	],
 	#category : 'ZagBench-Tests-RandomTrees',
 	#package : 'ZagBench-Tests',
@@ -19,8 +16,8 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-BeRandomTreesTest >> BenchmarkTreeChopTest [
-
+BeRandomTreesTest class >> BenchmarkTreeChopTest [
+<script>
 	| bench stats label |
 	#( 20000 40000 80000 ) do: [ :n |
 			#( 4 8 ) do: [ :c |
@@ -38,8 +35,8 @@ BeRandomTreesTest >> BenchmarkTreeChopTest [
 ]
 
 { #category : 'as yet unclassified' }
-BeRandomTreesTest >> BenchmarkTreeGrowTest [
-
+BeRandomTreesTest class >> BenchmarkTreeGrowTest [
+<script>
 	| bench stats label |
 	Transcript
 		open;
@@ -63,9 +60,10 @@ BeRandomTreesTest >> BenchmarkTreeGrowTest [
 ]
 
 { #category : 'benchmarking' }
-BeRandomTreesTest >> benchmarkFullGC [
-
+BeRandomTreesTest class >> benchmarkFullGC [
+<script>
 	| bench stats label |
+	
 	Transcript
 		show: 'FULL GC BENCHMARKS';
 		show: String lf.

@@ -1,12 +1,15 @@
 Class {
 	#name : 'BenchmarkTreeChop',
-	#superclass : 'BenchmarkRandomTrees',
+	#superclass : 'Benchmark',
 	#instVars : [
-		'nodeCount'
+		'nodeCount',
+		'maxChildren',
+		'seconds',
+		'tree'
 	],
-	#category : 'ZagBench-Benchmarking',
+	#category : 'ZagBench-RandomTrees',
 	#package : 'ZagBench',
-	#tag : 'Benchmarking'
+	#tag : 'RandomTrees'
 }
 
 { #category : 'as yet unclassified' }

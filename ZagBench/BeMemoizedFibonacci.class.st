@@ -38,8 +38,6 @@ BeMemoizedFibonacci >> initialize [
 { #category : 'running' }
 BeMemoizedFibonacci >> innerBenchmarkLoop: iterations [
 
-	| result |
-	result := true.
-	1 to: iterations do: [ :i | self fibMemo: 200000].
+	1 to: iterations do: [ :i | self fibMemo: 200000 ].
 	^ true
 ]

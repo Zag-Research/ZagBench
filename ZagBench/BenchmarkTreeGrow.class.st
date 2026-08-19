@@ -1,12 +1,13 @@
 Class {
 	#name : 'BenchmarkTreeGrow',
-	#superclass : 'BeTreesGenerate',
+	#superclass : 'Benchmark',
 	#instVars : [
-		'maxChildren'
+		'maxChildren',
+		'seconds'
 	],
-	#category : 'ZagBench-Benchmarking',
+	#category : 'ZagBench-RandomTrees',
 	#package : 'ZagBench',
-	#tag : 'Benchmarking'
+	#tag : 'RandomTrees'
 }
 
 { #category : 'as yet unclassified' }
@@ -44,7 +45,8 @@ maxChildren := anInteger
 
 { #category : 'instance creation' }
 BenchmarkTreeGrow >> seconds: aFraction [
-seconds := aFraction .
+
+	seconds := aFraction
 ]
 
 { #category : 'as yet unclassified' }
