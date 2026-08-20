@@ -32,7 +32,7 @@ BeRandomTreeNode >> children [
 ^children
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'initialization' }
 BeRandomTreeNode >> initialize [
     super initialize.
     children := OrderedCollection new.
