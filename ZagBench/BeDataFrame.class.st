@@ -27,6 +27,11 @@ BeDataFrame >> innerBenchmarkLoop [
     ^ self verify: (self loadDataFrame: innerIterations) inner: innerIterations
 ]
 
+{ #category : 'running' }
+BeDataFrame >> innerBenchmarkLoop: anInteger [ 
+	self shouldBeImplemented.
+]
+
 { #category : 'as yet unclassified' }
 BeDataFrame >> loadDataFrame: iterations [
     | allLines header rows csvString |

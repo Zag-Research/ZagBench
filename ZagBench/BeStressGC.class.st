@@ -7,188 +7,104 @@ Class {
 		'seconds',
 		'nodeCount'
 	],
-	#category : 'ZagBench-RandomTrees',
+	#category : 'ZagBench-StressGC',
 	#package : 'ZagBench',
-	#tag : 'RandomTrees'
+	#tag : 'StressGC'
 }
 
 { #category : 'benchmarking' }
-BeStressGC >> benchmark: iterations [
-	"Build a tree of iterations nodes, cut half, then GC.
-     Returns live node count after cut — used by verifyResult:."
+BeStressGC class >> innerIterations [
 
-	"Chop iterations random subtrees from the tree.
-     Rebuilds a fresh tree if the current one runs out of nodes."
+	^ 10000
+]
+
+{ #category : 'benchmarking' }
+BeStressGC >> benchmark: iterations [
+	"Chop iterations random subtrees from the tree, then cut half the remaining
+     top-level subtrees and run a partial GC. Rebuilds a fresh tree if the
+     current one runs out of nodes. Returns the number of subtrees chopped."
 
 	| chopCount |
 	chopCount := 0.
-	tree ifNil: [ self prepareTree ].
-	tree liveNodes < 2 ifTrue: [ self prepareTree ].
-
+	self build.
 	1 to: iterations do: [ :i |
 			tree liveNodes > 1
 				ifTrue: [
-						tree cutRandomSubtree.
+						i odd
+							ifTrue: [ tree cutHalfSubtrees ]
+							ifFalse: [ tree cutRandomSubtree: random ].
 						chopCount := chopCount + 1 ]
-				ifFalse: [ self prepareTree ] ].
-	tree cutHalfSubtrees.
-	tree garbageCollectMost.
-
+				ifFalse: [ self build ] ].
 	^ chopCount
 ]
 
-{ #category : 'as yet unclassified' }
-BeStressGC >> buildStats: results [
-    "Build a stats dictionary from a collection of ms values."
-    | total min max mean |
-    results isEmpty ifTrue: [
-        ^ Dictionary new
-            at: #runs put: 0;
-            at: #totalMs put: 0;
-            at: #minMs put: 0;
-            at: #maxMs put: 0;
-            at: #meanMs put: 0;
-            yourself].
-    total := results inject: 0 into: [:sum :each | sum + each].
-    min := results inject: results first into: [:m :each | m min: each].
-    max := results inject: results first into: [:m :each | m max: each].
-    mean := total / results size.
-    ^ Dictionary new
-        at: #runs put: results size;
-        at: #totalMs put: total;
-        at: #minMs put: min;
-        at: #maxMs put: max;
-        at: #meanMs put: mean;
-        yourself
+{ #category : 'building' }
+BeStressGC >> build [
+
+	| queue current childCount child created |
+	tree := self nodeClass new.
+	tree value: 0.
+	queue := OrderedCollection new.
+	queue addLast: tree.
+	created := 1.
+	[ created < nodeCount and: [ queue notEmpty ] ] whileTrue: [
+			current := queue removeFirst.
+			childCount := 1 + (random nextInteger: maxChildren).
+			1 to: childCount do: [ :i |
+					created < nodeCount ifTrue: [
+							child := self nodeClass new.
+							child value: created.
+							current addChild: child.
+							queue addLast: child.
+							created := created + 1 ] ] ].
+
+	^ self
+]
+
+{ #category : 'memory space' }
+BeStressGC >> garbageCollect [
+	"Primitive. Reclaims all garbage and answers the size of the largest free chunk in old space."
+
+	Smalltalk garbageCollect
+
+]
+
+{ #category : 'memory space' }
+BeStressGC >> garbageCollectMost [
+	"Primitive. Reclaims recently created garbage (which is usually most of it) fairly quickly and answers the number of bytes of available space."
+
+	Smalltalk garbageCollectMost
+
 ]
 
 { #category : 'initialization' }
 BeStressGC >> initialize [
 
 	super initialize.
-	maxChildren := 4.
-	nodeCount := 20000.
-	tree := 0
+	self nodeCount: 1000.
+	self maxChildren: 4.
+	random := BeRandom new
 ]
 
 { #category : 'running' }
-BeStressGC >> innerBenchmarkLoop: iterations [
-
-	Smalltalk garbageCollectMost.
-	self benchmark: iterations.
-	^ true
+BeStressGC >> innerBenchmarkLoop: iterations [ 
+    Smalltalk garbageCollectMost.
+    self benchmark: iterations.
+    ^ true
 ]
 
-{ #category : 'as yet unclassified' }
-BeStressGC >> maxChildren: anInteger [
-	maxChildren := anInteger
+{ #category : 'accessing' }
+BeStressGC >> maxChildren: anInteger [ 
+    maxChildren := anInteger
+]
+
+{ #category : 'configuration' }
+BeStressGC >> nodeClass [
+	^ BeRandomTreeNode 
 ]
 
 { #category : 'accessing' }
 BeStressGC >> nodeCount: anInteger [
+
 	nodeCount := anInteger
-]
-
-{ #category : 'running' }
-BeStressGC >> prepareTree [
-    "Build the tree once before benchmarking the chop."
-    tree := BeRandomTrees new
-        nodeCount: nodeCount;
-        maxChildren: maxChildren;
-        build
-]
-
-{ #category : 'printing' }
-BeStressGC >> printStats: stats label: label [
-	"Print a statistics dictionary to Transcript."
-
-	Transcript
-		show: 'Runs      : ' , (stats at: #runs) printString;
-		show: String lf;
-		show: 'Total ms  : ' , (stats at: #totalMs) printString , String lf;
-		show: 'Min ms    : ' , (stats at: #minMs) printString , String lf;
-		show: 'Max ms    : ' , (stats at: #maxMs) printString , String lf;
-		show: 'Mean ms   : ' , (stats at: #meanMs) printString , String lf;
-		show: String lf
-]
-
-{ #category : 'as yet unclassified' }
-BeStressGC >> run: innerIterations [ 
-    "Run innerBenchmarkLoop: repeatedly until seconds have elapsed.
-     Returns a Dictionary with statistics."
-    | results startTime elapsed ms |
-    results := OrderedCollection new.
-    startTime := DateAndTime now.
-    
-    [
-        elapsed := (DateAndTime now - startTime) totalSeconds.
-        elapsed < seconds
-    ] whileTrue: [
-        ms := Time millisecondsToRun: [
-            self innerBenchmarkLoop: innerIterations].
-        results add: ms.
-    ].
-    
-    ^ self statisticsFrom: results
-]
-
-{ #category : 'as yet unclassified' }
-BeStressGC >> run: innerIterations forSeconds: seconds [
-    "Run innerBenchmarkLoop: repeatedly until seconds have elapsed.
-     Returns a Dictionary with statistics."
-    | results startTime elapsed ms |
-    results := OrderedCollection new.
-    startTime := DateAndTime now.
-    
-    [
-        elapsed := (DateAndTime now - startTime) totalSeconds.
-        elapsed < seconds
-    ] whileTrue: [
-        ms := Time millisecondsToRun: [
-            self innerBenchmarkLoop: innerIterations].
-        results add: ms.
-    ].
-    
-    ^ self statisticsFrom: results
-]
-
-{ #category : 'as yet unclassified' }
-BeStressGC >> runIterations: innerIterations [
-	"Run innerBenchmarkLoop: repeatedly until seconds elapse.
-     Call seconds: first to set duration. Default is 0.4 seconds."
-
-	| results startTime elapsed ms valid |
-	results := OrderedCollection new.
-	startTime := DateAndTime now.
-	[
-		elapsed := (DateAndTime now - startTime) totalSeconds.
-		elapsed < seconds ] whileTrue: [
-			ms := Time millisecondsToRun: [ valid := self innerBenchmarkLoop: innerIterations ].
-			valid ifFalse: [ ].
-			results add: ms ].
-	^ self buildStats: results
-]
-
-{ #category : 'instance creation' }
-BeStressGC >> seconds: afraction [
-seconds := afraction .
-]
-
-{ #category : 'as yet unclassified' }
-BeStressGC >> statisticsFrom: results [
-    "Compute min, max, mean, total from a collection of ms timings."
-    | total min max mean |
-    results isEmpty ifTrue: [^ Dictionary new].
-    total := results inject: 0 into: [:sum :each | sum + each].
-    min := results inject: results first into: [:m :each | m min: each].
-    max := results inject: results first into: [:m :each | m max: each].
-    mean := total / results size.
-    ^ Dictionary new
-        at: #runs put: results size;
-        at: #totalMs put: total;
-        at: #minMs put: min;
-        at: #maxMs put: max;
-        at: #meanMs put: mean;
-        at: #results put: results;
-        yourself
 ]
