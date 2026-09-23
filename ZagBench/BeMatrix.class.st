@@ -20,6 +20,23 @@ BeMatrix class >> new: size [
 	^ self basicNew size: size
 ]
 
+{ #category : 'arithmetic' }
+BeMatrix >> * otherMatrix [
+
+	" NEW  `x * sourceMatrix`
+	  but BeMatrix had no * method, so it was a doesNotUnderstand.
+	  Standard square matrix multiplication, non-destructive (returns a new BeMatrix). "
+		| n resultMatrix sum |
+		n := self size.
+		resultMatrix := self class new: n.
+		1 to: n do: [ :i |
+				1 to: n do: [ :j |
+						sum := 0.0.
+						1 to: n do: [ :k | sum := sum + ((self at: i and: k) * (otherMatrix at: k and: j)) ].
+						resultMatrix at: i at: j put: sum ] ].
+		^ resultMatrix 
+]
+
 { #category : 'accessing' }
 BeMatrix >> at: row and: col [
 

@@ -2,19 +2,33 @@ Class {
 	#name : 'BeDataFrame',
 	#superclass : 'Benchmark',
 	#instVars : [
-		'columns'
+		'columns',
+		'rows',
+		'columnNames',
+		'rowsCollection'
 	],
 	#classVars : [
 		'DataFrame'
+	],
+	#classInstVars : [
+		'columnNames',
+		'rows'
 	],
 	#category : 'ZagBench-DataFrame',
 	#package : 'ZagBench',
 	#tag : 'DataFrame'
 }
 
+{ #category : 'accessing' }
+BeDataFrame class >> innerIterations [
+    ^ 5000
+]
+
 { #category : 'rendering' }
-BeDataFrame >> columnNames [ 
-^columns
+BeDataFrame >> columnNames [
+^columnNames 
+
+	
 ]
 
 { #category : 'as yet unclassified' }
@@ -23,25 +37,31 @@ BeDataFrame >> dataSetFile [
 ]
 
 { #category : 'running' }
-BeDataFrame >> innerBenchmarkLoop [
+BeDataFrame >> innerBenchmarkLoop: innerIterations [
     ^ self verify: (self loadDataFrame: innerIterations) inner: innerIterations
 ]
 
-{ #category : 'running' }
-BeDataFrame >> innerBenchmarkLoop: anInteger [ 
-	self shouldBeImplemented.
+{ #category : 'accessing' }
+BeDataFrame >> innerIterations [
+	^ self class innerIterations
 ]
 
 { #category : 'as yet unclassified' }
-BeDataFrame >> loadDataFrame: iterations [
-    | allLines header rows csvString |
+BeDataFrame >> loadDataFrame: innerIterations [
+    | allLines header rowLines |
     allLines := self rawLines.
     header := allLines first.
-    rows := (allLines allButFirst) first: iterations.
-    csvString := String streamContents: [ :s |
-        s nextPutAll: header; cr.
-        rows do: [ :line | s nextPutAll: line; cr ] ].
-    ^ DataFrame readFromCsvHandRolled: csvString
+    rowLines := allLines allButFirst first: innerIterations.
+    columnNames := (header findTokens: ',') collect: [ :tok | tok trimSeparators ].
+    rows := rowLines collect: [ :line |
+        (line findTokens: ',') collect: [ :tok | tok trimSeparators ] ].
+    ^ self
+]
+
+{ #category : 'accessing' }
+BeDataFrame >> numberOfRows [
+
+	^ rows size 
 ]
 
 { #category : 'as yet unclassified' }
@@ -76,8 +96,9 @@ BeDataFrame >> readFromCsvHandRolled: aCsvString [
     ^ DataFrame withRows: parsedRows columnNames: header
 ]
 
-{ #category : 'as yet unclassified' }
-BeDataFrame >> trimSeparators [
+{ #category : 'accessing' }
+BeDataFrame >> rows [ 
+^rows
 ]
 
 { #category : 'verification' }
