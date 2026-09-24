@@ -5,7 +5,8 @@ Class {
 		'columns',
 		'rows',
 		'columnNames',
-		'rowsCollection'
+		'rowsCollection',
+		'aCharacter'
 	],
 	#classVars : [
 		'DataFrame'
@@ -19,9 +20,10 @@ Class {
 	#tag : 'DataFrame'
 }
 
-{ #category : 'accessing' }
+{ #category : 'benchmarking' }
 BeDataFrame class >> innerIterations [
-    ^ 5000
+
+	^ 5000
 ]
 
 { #category : 'rendering' }
@@ -47,16 +49,27 @@ BeDataFrame >> innerIterations [
 	^ self class innerIterations
 ]
 
+{ #category : 'testing' }
+BeDataFrame >> isTrimmableChar: cCharacter [
+	^ aCharacter = Character space 
+	or: [aCharacter = Character tab or: [ aCharacter = Character cr or: [ aCharacter = Character lf ] ] ]
+]
+
 { #category : 'as yet unclassified' }
 BeDataFrame >> loadDataFrame: innerIterations [
     | allLines header rowLines |
     allLines := self rawLines.
     header := allLines first.
     rowLines := allLines allButFirst first: innerIterations.
-    columnNames := (header findTokens: ',') collect: [ :tok | tok trimSeparators ].
+    columnNames := (header findTokens: ',') collect: [ :tok | self trimToken: tok ].
     rows := rowLines collect: [ :line |
-        (line findTokens: ',') collect: [ :tok | tok trimSeparators ] ].
+        (line findTokens: ',') collect: [ :tok | self trimToken: tok ] ].
     ^ self
+]
+
+{ #category : 'accessing' }
+BeDataFrame >> numberOfColumns [
+    ^ columnNames size
 ]
 
 { #category : 'accessing' }
@@ -100,6 +113,19 @@ BeDataFrame >> readFromCsvHandRolled: aCsvString [
 { #category : 'accessing' }
 BeDataFrame >> rows [ 
 ^rows
+]
+
+{ #category : 'as yet unclassified' }
+BeDataFrame >> trimToken: aString [
+
+	| start stop |
+	start := 1.
+	stop := aString size.
+	
+		start <= stop and: [ start := start + 1 ].
+		[ stop >= start and: [ self isTrimmableChar: (aString at: start) ] ] whileTrue: [ start := start + 1 ].
+		[ stop >= start and: [ self isTrimmableChar: (aString at: stop) ] ] whileTrue: [ stop := stop - 1 ].
+		^ aString copyFrom: start to: stop 
 ]
 
 { #category : 'verification' }
