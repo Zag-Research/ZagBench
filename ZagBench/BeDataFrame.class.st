@@ -33,7 +33,8 @@ BeDataFrame >> columnNames [
 
 { #category : 'as yet unclassified' }
 BeDataFrame >> dataSetFile [
-    ^ 'data/mnist_test.csv' asFileReference
+    ^ 'mnist_test.csv' asFileReference
+
 ]
 
 { #category : 'running' }
