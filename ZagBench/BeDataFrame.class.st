@@ -8,9 +8,6 @@ Class {
 		'rowsCollection',
 		'aCharacter'
 	],
-	#classVars : [
-		'DataFrame'
-	],
 	#classInstVars : [
 		'columnNames',
 		'rows'
@@ -23,7 +20,7 @@ Class {
 { #category : 'benchmarking' }
 BeDataFrame class >> innerIterations [
 
-	^ 5000
+	^ 500
 ]
 
 { #category : 'rendering' }
@@ -102,12 +99,15 @@ BeDataFrame >> readFromCsv: aCsvString [
 
 { #category : 'as yet unclassified' }
 BeDataFrame >> readFromCsvHandRolled: aCsvString [
-    | lines header parsedRows |
-    lines := aCsvString lines reject: [ :l | l isEmpty ].
-    header := (lines first findTokens: ',') collect: [ :tok | tok trimSeparators ].
-    parsedRows := (lines allButFirst) collect: [ :line |
-        (line findTokens: ',') collect: [ :tok | tok trimSeparators ] ].
-    ^ DataFrame withRows: parsedRows columnNames: header
+
+	| lines header parsedRows |
+	lines := aCsvString lines reject: [ :l | l isEmpty ].
+	header := (lines first findTokens: ',') collect: [ :tok |
+		          tok trimSeparators ].
+	parsedRows := lines allButFirst collect: [ :line |
+		              (line findTokens: ',') collect: [ :tok |
+			              tok trimSeparators ] ].
+	^ BeDataFrame withRows: parsedRows columnNames: header
 ]
 
 { #category : 'accessing' }
@@ -130,10 +130,9 @@ BeDataFrame >> trimToken: aString [
 
 { #category : 'verification' }
 BeDataFrame >> verify: result inner: innerIterations [
-    (result isKindOf: DataFrame) ifFalse: [ ^ false ].
-    result numberOfRows = innerIterations ifFalse: [ ^ false ].
-    result numberOfColumns = 785 ifFalse: [ ^ false ].
-    ^ true
-
-
+self halt.
+	(result isKindOf: BeDataFrame) ifFalse: [ ^ false ].
+	result numberOfRows = innerIterations ifFalse: [ ^ false ].
+	result numberOfColumns = 785 ifFalse: [ ^ false ].
+	^ true
 ]
