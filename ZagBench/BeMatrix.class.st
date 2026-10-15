@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'matrix',
 		'augmented',
-		'maxRow'
+		'maxRow',
+		'size'
 	],
 	#classInstVars : [
 		'inverted'
@@ -22,25 +23,37 @@ BeMatrix class >> new: size [
 
 { #category : 'arithmetic' }
 BeMatrix >> * otherMatrix [
+	" FIXED - was sending `at:at:put:`, which BeMatrix never defined (only
+	  the 2-arg getter at:and: existed, no setter at all).  "
+	| n resultMatrix sum |
+	n := self size.
+	resultMatrix := self class new: n.
+	1 to: n do: [ :i |
+		1 to: n do: [ :j |
+			sum := 0.0.
+			1 to: n do: [ :k | sum := sum + ((self at: i and: k) * (otherMatrix at: k and: j)) ].
+			resultMatrix at: i and: j put: sum ] ].
+	^ resultMatrix
+]
 
-	" NEW  `x * sourceMatrix`
-	  but BeMatrix had no * method, so it was a doesNotUnderstand.
-	  Standard square matrix multiplication, non-destructive (returns a new BeMatrix). "
-		| n resultMatrix sum |
-		n := self size.
-		resultMatrix := self class new: n.
-		1 to: n do: [ :i |
-				1 to: n do: [ :j |
-						sum := 0.0.
-						1 to: n do: [ :k | sum := sum + ((self at: i and: k) * (otherMatrix at: k and: j)) ].
-						resultMatrix at: i at: j put: sum ] ].
-		^ resultMatrix 
+{ #category : 'converting' }
+BeMatrix >> asOrderedCollection [
+matrix := (1 to: size) collect: [ : r | Array new: size withAll: 0.0] asOrderedCollection.
 ]
 
 { #category : 'accessing' }
 BeMatrix >> at: row and: col [
 
 	^ (matrix at: row) at: col
+]
+
+{ #category : 'accessing' }
+BeMatrix >> at: row and: col put: aValue [
+	" NEW - setter counterpart to at:and:. Nothing in the class could write
+	  into a result matrix by index before this; * needs it to fill in
+	  each product entry. "
+	^ (matrix at: row) at: col put: aValue
+ 
 ]
 
 { #category : 'accessing' }
@@ -167,21 +180,21 @@ BeMatrix >> partialPivoting: col [
     ^ maxRow
 ]
 
-{ #category : 'accessing' }
-BeMatrix >> printString [ 
-  | stream  |
-
-matrix ifNil: [ 'BeMatrix uninitialized' ].
-matrix ifEmpty: [ 'BeMatrix is empty' ].
-
-stream := WriteStream on: String new.
-1 to: self size do: [ : row|
-	1 to: self size do:[:column|
-		stream nextPutAll: ((self at: row and: column)printString).
-		column < self size ifTrue: [ stream nextPutAll: '' ] ].
+{ #category : 'printing' }
+BeMatrix >> printString [
+   " FIXED - ifNil:/ifEmpty: results were being discarded (no ^), so an
+     uninitialized/empty matrix silently fell through to the loop below
+     instead of returning the descriptive string. "
+   | stream |
+   matrix ifNil: [ ^ 'BeMatrix uninitialized' ].
+   matrix ifEmpty: [ ^ 'BeMatrix is empty' ].
+   stream := WriteStream on: String new.
+   1 to: self size do: [ :row |
+	1 to: self size do: [ :column |
+		stream nextPutAll: ((self at: row and: column) printString).
+		column < self size ifTrue: [ stream nextPutAll: ' ' ] ].
 	stream nextPut: Character lf ].
-	^ stream contents
-	
+   ^ stream contents
 ]
 
 { #category : 'accessing' }
@@ -220,9 +233,17 @@ BeMatrix >> size [
 
 { #category : 'accessing' }
 BeMatrix >> size: size [
-
-	matrix := (1 to: size) collect: [ : r | Array new: size withAll: 0.0] asOrderedCollection.
-
+	" FIXED - Smalltalk sends unary
+	  messages before keyword messages, so `asOrderedCollection` was binding
+	  to the BLOCK LITERAL itself, not to the result of collect:. That block
+	  doesn't understand asOrderedCollection - which is exactly why the
+	  debugger showed FullBlockClosure>>asOrderedCollection / shouldBeImplemented
+	  on the stack: an earlier 'Create' click on that same DNU had stubbed
+	  the method onto FullBlockClosure rather than fixing the real bug.
+	  Adding parens around the collect: forces asOrderedCollection to apply
+	  to the resulting collection instead. "
+	matrix := ((1 to: size) collect: [ :r | Array new: size withAll: 0.0 ]) asOrderedCollection
+ 
 ]
 
 { #category : 'as yet unclassified' }
@@ -238,12 +259,15 @@ BeMatrix >> swapRows: col [
 
 { #category : 'accessing' }
 BeMatrix >> with: aCollection [
-	matrix:= OrderedCollection new.
-	aCollection collect: [:row |
+	" FIXED - `maxRow = 1.` was an equality test, not an assignment, so
+	  maxRow was silently left nil. Currently harmless (inverted always sets
+	  maxRow := col before using it), but it's real dead/wrong code, not what
+	  was intended, so fixed to := for when this is reused elsewhere. "
+	matrix := OrderedCollection new.
+	aCollection collect: [ :row |
 		matrix add: row asOrderedCollection ].
 	augmented := OrderedCollection new.
-	maxRow = 1.
-
+	maxRow := 1.
 
 
 ]
