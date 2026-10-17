@@ -4,9 +4,7 @@ Class {
 	#instVars : [
 		'columns',
 		'rows',
-		'columnNames',
-		'rowsCollection',
-		'aCharacter'
+		'columnNames'
 	],
 	#classInstVars : [
 		'columnNames',
@@ -47,9 +45,11 @@ BeDataFrame >> innerIterations [
 ]
 
 { #category : 'testing' }
-BeDataFrame >> isTrimmableChar: cCharacter [
-	^ aCharacter = Character space 
-	or: [aCharacter = Character tab or: [ aCharacter = Character cr or: [ aCharacter = Character lf ] ] ]
+BeDataFrame >> isTrimmableChar: aCharacter [
+    ^ aCharacter = Character space
+        or: [ aCharacter = Character tab
+        or: [ aCharacter = Character cr
+        or: [ aCharacter = Character lf ] ] ]
 ]
 
 { #category : 'as yet unclassified' }
@@ -81,33 +81,11 @@ BeDataFrame >> rawLines [
 
 ]
 
-{ #category : 'as yet unclassified' }
-BeDataFrame >> readFromCsv: aCsvString [
-	| lines header parsedRows |
-	lines := aCsvString lines reject: #isEmpty.
-	
+{ #category : 'accessing' }
+BeDataFrame >> rowAt: anIndex [
+    ^ rows at: anIndex
 
-	"Extract the header row"
-	header := (lines first findTokens: ',') collect: #trimBoth.
 
-	"Parse remaining rows into row arrays"
-	parsedRows := lines allButFirst collect: [ :line |
-		(line findTokens: ',') collect: #trimBoth ].
-
-	
-]
-
-{ #category : 'as yet unclassified' }
-BeDataFrame >> readFromCsvHandRolled: aCsvString [
-
-	| lines header parsedRows |
-	lines := aCsvString lines reject: [ :l | l isEmpty ].
-	header := (lines first findTokens: ',') collect: [ :tok |
-		          tok trimSeparators ].
-	parsedRows := lines allButFirst collect: [ :line |
-		              (line findTokens: ',') collect: [ :tok |
-			              tok trimSeparators ] ].
-	^ BeDataFrame withRows: parsedRows columnNames: header
 ]
 
 { #category : 'accessing' }
@@ -115,24 +93,27 @@ BeDataFrame >> rows [
 ^rows
 ]
 
+{ #category : 'enumerating' }
+BeDataFrame >> rowsDo: aBlock [
+    rows do: aBlock
+]
+
 { #category : 'as yet unclassified' }
 BeDataFrame >> trimToken: aString [
-
-	| start stop |
-	start := 1.
-	stop := aString size.
-	
-		start <= stop and: [ start := start + 1 ].
-		[ stop >= start and: [ self isTrimmableChar: (aString at: start) ] ] whileTrue: [ start := start + 1 ].
-		[ stop >= start and: [ self isTrimmableChar: (aString at: stop) ] ] whileTrue: [ stop := stop - 1 ].
-		^ aString copyFrom: start to: stop 
+    | start stop |
+    start := 1.
+    stop := aString size.
+    [ start <= stop and: [ self isTrimmableChar: (aString at: start) ] ]
+        whileTrue: [ start := start + 1 ].
+    [ stop >= start and: [ self isTrimmableChar: (aString at: stop) ] ]
+        whileTrue: [ stop := stop - 1 ].
+    ^ aString copyFrom: start to: stop
 ]
 
 { #category : 'verification' }
 BeDataFrame >> verify: result inner: innerIterations [
-self halt.
-	(result isKindOf: BeDataFrame) ifFalse: [ ^ false ].
-	result numberOfRows = innerIterations ifFalse: [ ^ false ].
-	result numberOfColumns = 785 ifFalse: [ ^ false ].
-	^ true
+    (result isKindOf: self class) ifFalse: [ ^ false ].
+    result numberOfRows = innerIterations ifFalse: [ ^ false ].
+    result numberOfColumns = 785 ifFalse: [ ^ false ].
+    ^ true
 ]
