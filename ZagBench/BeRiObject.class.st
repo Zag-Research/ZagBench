@@ -16,7 +16,7 @@ Class {
 	#tag : 'Richards'
 }
 
-{ #category : 'initialize' }
+{ #category : 'class initialization' }
 BeRiObject class >> initialize [
     "BeRiObject initialize"
     DeviceA := 5.
@@ -27,6 +27,12 @@ BeRiObject class >> initialize [
     Idler := 1.
     Worker := 2.
     WorkPacketKind := 2
+]
+
+{ #category : 'benchmarking' }
+BeRiObject class >> innerIterations [ 
+
+^1
 ]
 
 { #category : 'utilities' }
