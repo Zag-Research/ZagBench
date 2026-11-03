@@ -17,12 +17,6 @@ BeFannkuch class >> innerIterations [
 	^ 10
 ]
 
-{ #category : 'benchmarking' }
-BeFannkuch class >> mainIterations [
-
-	^ 2
-]
-
 { #category : 'running' }
 BeFannkuch >> innerBenchmarkLoop: iterations [
 
@@ -42,7 +36,7 @@ BeFannkuch >> solve: n [
 			permutation first ~= 1 ifTrue: [
 					array := permutation copy.
 					flips := 0.
-					[ (toFlip := array at: 1) = 1 ] whileFalse: [
+					[ (toFlip := array first) = 1 ] whileFalse: [
 							flips := flips + 1.
 							1 to: toFlip // 2 do: [ :i |
 									| temp target |

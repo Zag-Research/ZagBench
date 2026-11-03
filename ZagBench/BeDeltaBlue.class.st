@@ -258,6 +258,7 @@ BeDeltaBlue >> incrementalRemove: c [
 BeDeltaBlue >> initialize [
 	"BeDBPlanner initialize"
 
+	super initialize.
 	currentMark := 1.
 ]
 

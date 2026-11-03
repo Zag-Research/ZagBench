@@ -23,7 +23,7 @@ BeMatrixInversion class >> innerIterations [
 BeMatrixInversion >> initialize [
 |matrix augmented maxRow|
 	super initialize.
-	size := 10.
+	size := 22.
 	matrix:= OrderedCollection new.
 	augmented :=OrderedCollection new.
 	maxRow:= 1.

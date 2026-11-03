@@ -15,12 +15,6 @@ BeResilientBlocks class >> innerIterations [
 	^ 2500
 ]
 
-{ #category : 'benchmarking' }
-BeResilientBlocks class >> mainIterations [
-
-	^ 15
-]
-
 { #category : 'running' }
 BeResilientBlocks >> evaluate: iterations [
 

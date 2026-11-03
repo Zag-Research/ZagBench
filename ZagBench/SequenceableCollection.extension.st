@@ -9,7 +9,7 @@ SequenceableCollection >> permutationsIteratedDo: aBlock [
 	mechanism from the Fannkuch-Redux algorithm rather than the recursive algorithm.
 	All the same permutations are presented, but in a different order."
 
-	"(Array streamContents: [:stream | (1 to: 3) fkPermutationsDo: [:each | stream nextPut: each copy]]) >>> #((1 2 3) (2 1 3) (2 3 1) (3 2 1) (3 1 2) (1 3 2))"
+	"(Array streamContents: [:stream | (1 to: 3) permutationsIteratedDo: [:each | stream nextPut: each copy]]) >>> #((1 2 3) (2 1 3) (2 3 1) (3 2 1) (3 1 2) (1 3 2))"
 
 	| n perm count r keepShifting temp |
 	n := self size.
@@ -25,7 +25,7 @@ SequenceableCollection >> permutationsIteratedDo: aBlock [
 			keepShifting := true.
 			[ keepShifting ] whileTrue: [
 					r = n ifTrue: [ ^ self ].
-					temp := perm at: 1.
+					temp := perm first.
 					perm
 						replaceFrom: 1
 						to: r
