@@ -91,8 +91,12 @@ class Run
     @times            = []
   end
 
-  def set_num_iterations(n)   = @num_iterations   = n
-  def set_inner_iterations(n) = @inner_iterations = n
+  def set_num_iterations(n)
+     @num_iterations   = n
+  end
+  def set_inner_iterations(n)
+    @inner_iterations = n
+  end
 
   def run_benchmark
     puts "Starting #{@name} benchmark ..."
